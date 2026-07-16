@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Digital Circus STEM Escape</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+</head>
+<body>
+  <h1>Digital Circus<br />STEM Escape</h1>
+
+  <main>
+    <div class="hud">
+      <div>
+        <span class="hud-etiqueta">Llaves</span>
+        <div id="hud-llaves"></div>
+      </div>
+      <div style="flex:1; max-width:240px">
+        <span class="hud-etiqueta">Abstracción</span>
+        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstracción"></div>
+      </div>
+    </div>
+
+    <p id="subtitulo-caine" aria-live="polite"></p>
+
+    <div class="fila-botones">
+      <button id="btn-intro">🎪 Entrar al circo</button>
+    </div>
+
+    <nav class="pasillo" aria-label="Salas del circo">
+      <a class="puerta" href="sala.html?id=1" data-sala="1">
+        <span class="emoji">🎭</span><span class="nombre">Gangle</span>
+        <span class="materia">Matemáticas</span>
+      </a>
+      <a class="puerta" href="sala.html?id=2" data-sala="2">
+        <span class="emoji">🔬</span><span class="nombre">Ragatha</span>
+        <span class="materia">Ciencias</span>
+      </a>
+      <a class="puerta" href="sala.html?id=3" data-sala="3">
+        <span class="emoji">🐛</span><span class="nombre">Kinger</span>
+        <span class="materia">Programación</span>
+      </a>
+      <a class="puerta" href="sala.html?id=4" data-sala="4">
+        <span class="emoji">⚙️</span><span class="nombre">Zooble</span>
+        <span class="materia">Tecnología</span>
+      </a>
+      <a class="puerta" href="sala.html?id=5" data-sala="5">
+        <span class="emoji">🎩</span><span class="nombre">Pomni</span>
+        <span class="materia">Inteligencia Artificial</span>
+      </a>
+      <a class="puerta" href="portal.html" id="puerta-portal">
+        <span class="emoji">🌀</span><span class="nombre">Portal</span>
+        <span class="materia">¿La salida?</span>
+      </a>
+    </nav>
+
+    <p style="opacity:0.55; font-size:0.8rem; text-align:center">
+      En la instalación física, cada puerta corresponde a un código QR.
+      Esta página es el pasillo (hub) del recorrido.
+    </p>
+  </main>
+
+  <script type="module">
+    import { pintarHUD, llaves } from "./js/estado.js";
+    import { caineDice } from "./js/audio-caine.js";
+    pintarHUD();
+    if (llaves().length >= 5) {
+      document.getElementById("puerta-portal").classList.add("lista");
+    }
+    document.getElementById("btn-intro").addEventListener("click", () => {
+      caineDice("00_intro");
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sala — Digital Circus STEM Escape</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+<body>
+  <h1 id="titulo-sala">Sala</h1>
+
+  <main>
+    <div class="hud">
+      <div>
+        <span class="hud-etiqueta">Llaves</span>
+        <div id="hud-llaves"></div>
+      </div>
+      <div style="flex:1; max-width:240px">
+        <span class="hud-etiqueta">Abstracción</span>
+        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstracción"></div>
+      </div>
+    </div>
+
+    <model-viewer id="visor3d"
+      camera-controls
+      autoplay="false"
+      ar
+      shadow-intensity="1"
+      alt="Escena 3D de la sala">
+    </model-viewer>
+
+    <p id="subtitulo-caine" aria-live="polite"></p>
+    <p id="indicacion"></p>
+
+    <div class="fila-botones">
+      <button id="btn-iniciar">🎬 Iniciar reto (activa cámara y micrófono)</button>
+      <button id="btn-responder">🎤 Responder</button>
+    </div>
+
+    <!-- Respaldo sin cámara: solo para desarrollo y demo de emergencia -->
+    <div id="modo-botones" hidden>
+      <div class="fila-botones">
+        <button id="btn-mano">🖐 Mano abierta</button>
+        <button id="btn-pulgar">👍 Pulgar arriba</button>
+        <button id="btn-sonrisa">😄 Sonrisa</button>
+      </div>
+      <input id="respuesta-texto" type="text"
+        placeholder="Escribe tu respuesta y presiona Enter" />
+    </div>
+
+    <!--
+      DIALOGFLOW (plan A, compañero 2): descomentar y poner el agent-id
+      cuando el agente esté listo. Mientras, el fallback de Web Speech
+      en gestos.js permite probar todo el flujo.
+
+      <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+      <df-messenger
+        chat-title="Caine"
+        agent-id="AGENT_ID_AQUI"
+        language-code="es"></df-messenger>
+    -->
+  </main>
+
+  <video id="camara" autoplay muted playsinline></video>
+  <script type="module" src="js/sala.js"></script>
+</body>
+</html>

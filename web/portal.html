@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cámara del Portal — Digital Circus STEM Escape</title>
+  <link rel="stylesheet" href="css/estilos.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+</head>
+<body>
+  <h1>🌀 La Cámara del Portal</h1>
+
+  <main>
+    <div class="hud">
+      <div>
+        <span class="hud-etiqueta">Llaves</span>
+        <div id="hud-llaves"></div>
+      </div>
+    </div>
+
+    <model-viewer id="visor3d"
+      src="modelos/portal.glb"
+      camera-controls
+      ar
+      shadow-intensity="1"
+      alt="Cámara del portal — modelado propio">
+    </model-viewer>
+
+    <p id="subtitulo-caine" aria-live="polite"></p>
+    <p id="indicacion"></p>
+
+    <div class="fila-botones">
+      <button id="btn-iniciar">🎬 Activar cámara</button>
+      <button id="btn-mano" hidden>🖐 Mano abierta (respaldo)</button>
+    </div>
+  </main>
+
+  <video id="camara" autoplay muted playsinline></video>
+
+  <script type="module">
+    import { llaves, pintarHUD } from "./js/estado.js";
+    import { caineDice } from "./js/audio-caine.js";
+    import { iniciarGestos } from "./js/gestos.js";
+    import { ANIMACIONES, TOTAL_LLAVES } from "./js/config-salas.js";
+
+    pintarHUD();
+    const visor = document.getElementById("visor3d");
+    const indicacion = document.getElementById("indicacion");
+    let abierto = false;
+
+    async function activarPortal() {
+      if (abierto) return;
+      if (llaves().length < TOTAL_LLAVES) {
+        indicacion.textContent =
+          `Te faltan ${TOTAL_LLAVES - llaves().length} llaves. Caine no abre nada gratis.`;
+        return;
+      }
+      abierto = true;
+      try {
+        visor.animationName = ANIMACIONES.portal;
+        visor.play({ repetitions: 1 });
+      } catch {}
+      indicacion.textContent = "✨ El portal se abre...";
+      await caineDice("99_final");
+      // El giro: "cruzas"... y despiertas en el pasillo de siempre.
+      sessionStorage.clear();
+      location.href = "index.html";
+    }
+
+    document.getElementById("btn-iniciar").addEventListener("click", async () => {
+      document.getElementById("btn-iniciar").hidden = true;
+      indicacion.textContent = "🖐 Mano abierta para activar el portal";
+      const video = document.getElementById("camara");
+      try {
+        await iniciarGestos(video, { manoAbierta: activarPortal });
+      } catch {
+        document.getElementById("btn-mano").hidden = false;
+      }
+    });
+    document.getElementById("btn-mano").addEventListener("click", activarPortal);
+  </script>
+</body>
+</html>
