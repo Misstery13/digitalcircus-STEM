@@ -21,8 +21,8 @@ const MODELO_ROSTRO =
   "https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task";
 
 const UMBRAL_SONRISA = 0.55;   // blendshape mouthSmileLeft/Right
-const FRAMES_SOSTENIDOS = 8;   // el gesto debe sostenerse ~8 frames
-const COOLDOWN_MS = 2500;      // tras disparar, ignora ese gesto un rato
+const FRAMES_SOSTENIDOS = 3;   // el gesto debe sostenerse ~3 frames (ajustado con pruebas reales)
+const COOLDOWN_MS = 1500;      // tras disparar, ignora ese gesto un rato (ajustado con pruebas reales)
 
 /**
  * Inicia cámara + detección continua.
@@ -43,12 +43,12 @@ export async function iniciarGestos(video, on = {}) {
   const vision = await FilesetResolver.forVisionTasks(WASM);
   const [gestos, rostro] = await Promise.all([
     GestureRecognizer.createFromOptions(vision, {
-      baseOptions: { modelAssetPath: MODELO_GESTOS, delegate: "GPU" },
+      baseOptions: { modelAssetPath: MODELO_GESTOS, delegate: "CPU" },
       runningMode: "VIDEO",
       numHands: 1,
     }),
     FaceLandmarker.createFromOptions(vision, {
-      baseOptions: { modelAssetPath: MODELO_ROSTRO, delegate: "GPU" },
+      baseOptions: { modelAssetPath: MODELO_ROSTRO, delegate: "CPU" },
       runningMode: "VIDEO",
       outputFaceBlendshapes: true,
       numFaces: 1,
@@ -76,7 +76,7 @@ export async function iniciarGestos(video, on = {}) {
     const rg = gestos.recognizeForVideo(video, t);
     const gesto = rg.gestures?.[0]?.[0];
     for (const nombre of ["Open_Palm", "Thumb_Up"]) {
-      if (gesto?.categoryName === nombre && gesto.score > 0.6) {
+      if (gesto?.categoryName === nombre && gesto.score > 0.65) {
         contador[nombre]++;
         if (contador[nombre] >= FRAMES_SOSTENIDOS) {
           disparar(nombre, nombre === "Open_Palm" ? on.manoAbierta : on.pulgarArriba);
