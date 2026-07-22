@@ -23,6 +23,8 @@ const MODELO_ROSTRO =
 const UMBRAL_SONRISA = 0.55;   // blendshape mouthSmileLeft/Right
 const FRAMES_SOSTENIDOS = 3;   // el gesto debe sostenerse ~3 frames (ajustado con pruebas reales)
 const COOLDOWN_MS = 1500;      // tras disparar, ignora ese gesto un rato (ajustado con pruebas reales)
+const DELEGATE_VISION = "CPU"; // GPU falla silenciosamente en varios navegadores/Windows (ajustado con pruebas reales)
+const UMBRAL_MANO = 0.65;      // confianza mínima para aceptar un gesto de mano (ajustado con pruebas reales)
 
 /**
  * Inicia cámara + detección continua.
@@ -43,12 +45,12 @@ export async function iniciarGestos(video, on = {}) {
   const vision = await FilesetResolver.forVisionTasks(WASM);
   const [gestos, rostro] = await Promise.all([
     GestureRecognizer.createFromOptions(vision, {
-      baseOptions: { modelAssetPath: MODELO_GESTOS, delegate: "CPU" },
+      baseOptions: { modelAssetPath: MODELO_GESTOS, delegate: DELEGATE_VISION },
       runningMode: "VIDEO",
       numHands: 1,
     }),
     FaceLandmarker.createFromOptions(vision, {
-      baseOptions: { modelAssetPath: MODELO_ROSTRO, delegate: "CPU" },
+      baseOptions: { modelAssetPath: MODELO_ROSTRO, delegate: DELEGATE_VISION },
       runningMode: "VIDEO",
       outputFaceBlendshapes: true,
       numFaces: 1,
@@ -76,7 +78,7 @@ export async function iniciarGestos(video, on = {}) {
     const rg = gestos.recognizeForVideo(video, t);
     const gesto = rg.gestures?.[0]?.[0];
     for (const nombre of ["Open_Palm", "Thumb_Up"]) {
-      if (gesto?.categoryName === nombre && gesto.score > 0.65) {
+      if (gesto?.categoryName === nombre && gesto.score > UMBRAL_MANO) {
         contador[nombre]++;
         if (contador[nombre] >= FRAMES_SOSTENIDOS) {
           disparar(nombre, nombre === "Open_Palm" ? on.manoAbierta : on.pulgarArriba);
