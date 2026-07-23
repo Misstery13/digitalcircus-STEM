@@ -25,11 +25,20 @@ const visor = document.getElementById("visor3d");
 const btnResponder = document.getElementById("btn-responder");
 const indicacion = document.getElementById("indicacion");
 
-document.getElementById("nombre-personaje").textContent =
-  `${sala.emoji} ${sala.personaje}`;
-document.getElementById("nombre-materia").textContent = sala.materia;
+// Rótulo: imagen de título si la sala la tiene, texto si no
+const rotulo = document.getElementById("rotulo-sala");
+if (sala.tituloImg) {
+  rotulo.classList.add("con-imagen");
+  rotulo.innerHTML =
+    `<img class="titulo-imagen" src="${sala.tituloImg}" alt="Sala de ${sala.personaje} · ${sala.materia}">`;
+} else {
+  document.getElementById("nombre-personaje").textContent =
+    `${sala.emoji} ${sala.personaje}`;
+  document.getElementById("nombre-materia").textContent = sala.materia;
+}
+
 document.title = `Sala ${id} — ${sala.personaje} | Digital Circus STEM Escape`;
-visor.src = sala.modelo;
+if (sala.modelo) visor.src = sala.modelo;
 estado.pintarHUD();
 
 // ---- Máquina de estados ----
@@ -53,7 +62,7 @@ function animar(nombre) {
 async function abrirPuerta() {
   if (fase !== "PUERTA") return;
   fase = "PREGUNTA";
-  document.getElementById("puerta3dWrap")?.classList.add("abierta");
+  document.getElementById("escena-sala")?.classList.add("abierta");
   animar(ANIMACIONES.puerta);
   await caineDice("gen_puerta_abierta");
   await hacerPregunta();

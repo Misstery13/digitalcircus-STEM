@@ -93,7 +93,7 @@ export function pintarHUD(idNueva = null) {
       const tiene = ganadas.includes(id);
       const nueva = tiene && id === Number(idNueva) ? " nueva" : "";
       const estado = tiene ? "obtenida" : "pendiente";
-      return `<span class="llave ${tiene ? "ganada" : ""}${nueva}" role="img" aria-label="Llave de la sala ${id}: ${estado}">🗝</span>`;
+      return `<span class="llave ${tiene ? "ganada" : ""}${nueva}" role="img" aria-label="Llave de la sala ${id}: ${estado}">🔑</span>`;
     }).join("");
     contLlaves.setAttribute("aria-label", `${ganadas.length} de ${TOTAL_SALAS} llaves obtenidas`);
   }

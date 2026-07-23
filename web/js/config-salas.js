@@ -10,7 +10,7 @@ export const SALAS = {
     personaje: "Gangle",
     materia: "Matemáticas",
     emoji: "🎭",
-    modelo: "modelos/sala1_gangle.glb",
+    modelo: "", // PENDIENTE: falta el .glb de la sala de Gangle (Diana)
     tituloImg: "img/titulos/sala1_gangle.png",
     // Respuestas aceptadas (minúsculas, sin acentos). El validador normaliza.
     respuestas: ["ocho", "8"],
@@ -27,7 +27,8 @@ export const SALAS = {
     personaje: "Ragatha",
     materia: "Ciencias",
     emoji: "🔬",
-    modelo: "modelos/sala2_ragatha.glb",
+    modelo: "modelos/ragatha.glb",
+    tituloImg: "img/titulos/sala2_ragatha.png",
     respuestas: ["h2o", "hache dos o", "agua h2o", "h dos o"],
     audios: {
       pregunta: "s2_pregunta",
@@ -42,7 +43,7 @@ export const SALAS = {
     personaje: "Kinger",
     materia: "Programación",
     emoji: "🐛",
-    modelo: "modelos/sala3_kinger.glb",
+    modelo: "modelos/tadc_-_kinger.glb",
     respuestas: ["bug", "bog", "bag"], // variantes fonéticas del reconocedor
     audios: {
       pregunta: "s3_pregunta",
@@ -57,7 +58,7 @@ export const SALAS = {
     personaje: "Zooble",
     materia: "Tecnología",
     emoji: "⚙️",
-    modelo: "modelos/sala4_zooble.glb",
+    modelo: "modelos/zooble.glb",
     respuestas: ["cpu", "procesador", "el procesador", "c p u"],
     audios: {
       pregunta: "s4_pregunta",
@@ -72,7 +73,7 @@ export const SALAS = {
     personaje: "Pomni",
     materia: "Inteligencia Artificial",
     emoji: "🎩",
-    modelo: "modelos/sala5_pomni.glb",
+    modelo: "modelos/pomni_from_the_amazing_digital_circus.glb",
     respuestas: ["artificial", "inteligencia artificial"],
     audios: {
       pregunta: "s5_pregunta",
