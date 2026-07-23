@@ -27,7 +27,7 @@
       camera-orbit="0deg 74deg 26m"
       field-of-view="42deg"
       min-camera-orbit="auto auto 0.01m"
-      max-camera-orbit="auto auto 200m"
+      max-camera-orbit="auto auto 500m"
       min-field-of-view="4deg"
       max-field-of-view="120deg"
       alt="El Circo Digital visto desde fuera">
@@ -47,14 +47,8 @@
         interaction-prompt="none"
         shadow-intensity="0"
         exposure="1.2"
-        camera-orbit="0deg 82deg 4.5m"
         alt="Caine, maestro de ceremonias del Circo Digital">
       </model-viewer>
-      <div id="caine-respaldo" hidden aria-hidden="true">
-        <div class="ojo"></div>
-        <div class="ojo der"></div>
-        <div class="boca"></div>
-      </div>
     </div>
   </div>
 
@@ -116,6 +110,7 @@
     import { VUELO } from "./js/vuelo.js";
     import { volarSecuencia, fijarEncuadre, ocultarMateriales }
       from "./js/camara.js";
+    import { CAINE, encuadrarCaine, animarCaine } from "./js/caine.js";
 
     // ══ AJUSTES DE CÁMARA ═══════════════════════════════════════════
     // Si el vuelo se queda corto o se pasa, toca SOLO estos números.
@@ -129,7 +124,6 @@
     const telon    = document.getElementById("telon");
     const titulo   = document.getElementById("titulo-telon");
     const visorC   = document.getElementById("caine");
-    const respaldo = document.getElementById("caine-respaldo");
     const escenaC  = document.getElementById("caine-escena");
     const flota    = document.getElementById("caine-flota");
     const btn      = document.getElementById("btn-entrar");
@@ -150,19 +144,27 @@
     }
 
     // Respaldo si falta caine_tadc.glb
-    visorC.addEventListener("error", () => {
-      visorC.style.display = "none";
-      respaldo.hidden = false;
-    });
+    let hablarCaine = () => {};
+
+    visorC.addEventListener("error", () =>
+      console.error("[caine] no se pudo cargar modelos/caine_tadc.glb"));
+
     visorC.addEventListener("load", () => {
       const anims = visorC.availableAnimations || [];
-      if (anims.length) { visorC.animationName = anims[0]; visorC.play(); }
+      console.log("[caine] animaciones en el modelo:", anims.length ? anims : "ninguna");
+      if (anims.length) {
+        // Si el modelo trae animación propia, esa manda
+        visorC.animationName = anims[0];
+        visorC.play();
+      }
+      // Encuadre a la cabeza + vida procedural (sirve traiga o no animación)
+      encuadrarCaine(visorC, CAINE);
+      hablarCaine = animarCaine(visorC, flota, CAINE);
     });
 
-    // Caine reacciona al volumen real de su voz
+    // La voz alimenta el rebote de Caine y desenfoca el fondo
     alHablar((intensidad) => {
-      flota.style.scale = String(1 + intensidad * 0.07);
-      flota.classList.toggle("hablando", intensidad > 0.06);
+      hablarCaine(intensidad);
       mundo.classList.toggle("desenfocado", intensidad > 0.04);
     });
 
