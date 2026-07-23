@@ -25,8 +25,9 @@ const visor = document.getElementById("visor3d");
 const btnResponder = document.getElementById("btn-responder");
 const indicacion = document.getElementById("indicacion");
 
-document.getElementById("titulo-sala").textContent =
-  `${sala.emoji} Sala de ${sala.personaje} · ${sala.materia}`;
+document.getElementById("nombre-personaje").textContent =
+  `${sala.emoji} ${sala.personaje}`;
+document.getElementById("nombre-materia").textContent = sala.materia;
 document.title = `Sala ${id} — ${sala.personaje} | Digital Circus STEM Escape`;
 visor.src = sala.modelo;
 estado.pintarHUD();
@@ -131,6 +132,7 @@ async function sonrisaDetectada() {
 // ---- Arranque ----
 async function iniciar() {
   document.getElementById("btn-iniciar").hidden = true;
+  btnResponder.hidden = false;
   indicar("🖐 Muestra tu mano abierta para tocar la puerta");
 
   const video = document.getElementById("camara");

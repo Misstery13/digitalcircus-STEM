@@ -2,65 +2,63 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Sala — Digital Circus STEM Escape</title>
-  <link rel="stylesheet" href="css/estilos.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="css/escenario.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
-<body>
-  <h1 id="titulo-sala">Sala</h1>
+<body class="sala">
 
-  <main>
-    <div class="hud">
-      <div>
-        <span class="hud-etiqueta">Llaves</span>
-        <div id="hud-llaves"></div>
-      </div>
-      <div style="flex:1; max-width:240px">
-        <span class="hud-etiqueta">Abstracción</span>
-        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstracción"></div>
-      </div>
-    </div>
-
+  <div id="escena-sala">
     <model-viewer id="visor3d"
       camera-controls
       autoplay="false"
       ar
       shadow-intensity="1"
+      exposure="1.05"
       alt="Escena 3D de la sala">
     </model-viewer>
+  </div>
 
-    <p id="subtitulo-caine" aria-live="polite"></p>
-    <p id="indicacion"></p>
+  <div id="vineta" aria-hidden="true"></div>
 
-    <div class="fila-botones">
-      <button id="btn-iniciar">🎬 Iniciar reto (activa cámara y micrófono)</button>
-      <button id="btn-responder">🎤 Responder</button>
-    </div>
-
-    <!-- Respaldo sin cámara: solo para desarrollo y demo de emergencia -->
-    <div id="modo-botones" hidden>
-      <div class="fila-botones">
-        <button id="btn-mano">🖐 Mano abierta</button>
-        <button id="btn-pulgar">👍 Pulgar arriba</button>
-        <button id="btn-sonrisa">😄 Sonrisa</button>
+  <div id="capa-ui">
+    <div id="hud-flotante" class="visible">
+      <div class="panel-hud">
+        <span class="hud-etiqueta">Llaves</span>
+        <div id="hud-llaves"></div>
       </div>
-      <input id="respuesta-texto" type="text"
-        placeholder="Escribe tu respuesta y presiona Enter" />
+      <div id="rotulo-sala">
+        <span class="personaje" id="nombre-personaje">—</span>
+        <span class="materia" id="nombre-materia"></span>
+      </div>
+      <div class="panel-hud">
+        <span class="hud-etiqueta">Abstracción</span>
+        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0"
+             aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstraccion"></div>
+      </div>
     </div>
 
-    <!--
-      DIALOGFLOW (plan A, compañero 2): descomentar y poner el agent-id
-      cuando el agente esté listo. Mientras, el fallback de Web Speech
-      en gestos.js permite probar todo el flujo.
+    <div id="zona-inferior">
+      <p id="subtitulo-caine" aria-live="polite"></p>
+      <p id="indicacion"></p>
 
-      <script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
-      <df-messenger
-        chat-title="Caine"
-        agent-id="AGENT_ID_AQUI"
-        language-code="es"></df-messenger>
-    -->
-  </main>
+      <div class="fila-botones">
+        <button id="btn-iniciar" class="boton-carpa">Comenzar</button>
+        <button id="btn-responder" class="boton-carpa" hidden>🎤 Responder</button>
+      </div>
+
+      <div id="modo-botones" hidden>
+        <div class="fila-botones">
+          <button id="btn-mano">🖐 Mano abierta</button>
+          <button id="btn-pulgar">👍 Pulgar arriba</button>
+          <button id="btn-sonrisa">😄 Sonrisa</button>
+        </div>
+        <input id="respuesta-texto" type="text" placeholder="Escribe tu respuesta y pulsa Enter" />
+      </div>
+    </div>
+  </div>
 
   <video id="camara" autoplay muted playsinline></video>
   <script type="module" src="js/sala.js"></script>
