@@ -81,12 +81,9 @@ body.escenario {
 
 #caine-flota {
   width: 100%; height: 100%;
-  animation: flotar 4.2s ease-in-out infinite;
-  transition: scale 0.1s linear, filter 0.2s ease;
-}
-@keyframes flotar {
-  0%, 100% { translate: 0 0; }
-  50%      { translate: 0 -20px; }
+  /* El movimiento lo genera js/caine.js vía transform */
+  transition: filter 0.2s ease;
+  will-change: transform;
 }
 #caine-flota.hablando { filter: drop-shadow(0 0 46px rgba(240,214,140,0.55)); }
 
@@ -96,36 +93,6 @@ body.escenario {
   border: none;
   --poster-color: transparent;
   --progress-bar-color: transparent;
-}
-
-#caine-respaldo {
-  position: absolute; inset: 0;
-  display: grid; place-content: center;
-  grid-template-columns: repeat(2, auto);
-  gap: 18px;
-}
-#caine-respaldo .ojo {
-  width: clamp(60px, 12vh, 100px); aspect-ratio: 1;
-  border-radius: 50%; background: #f7efdc; border: 6px solid #12101f;
-  position: relative;
-}
-#caine-respaldo .ojo::after {
-  content: ""; position: absolute;
-  width: 38%; aspect-ratio: 1; border-radius: 50%;
-  background: #12101f; top: 31%; left: 31%;
-  animation: mirar 4.5s ease-in-out infinite;
-}
-#caine-respaldo .ojo.der::after { animation-delay: 0.12s; }
-@keyframes mirar {
-  0%, 45%, 100% { transform: translate(0,0); }
-  60%, 88%      { transform: translate(-26%, 10%); }
-}
-#caine-respaldo .boca {
-  grid-column: 1 / -1;
-  height: clamp(40px, 7vh, 64px);
-  border-radius: 0 0 999px 999px;
-  background: repeating-linear-gradient(90deg, #f7efdc 0 15px, #12101f 15px 19px);
-  border: 6px solid #12101f; border-top: none;
 }
 
 /* ---- TELÓN ---- */
@@ -294,7 +261,7 @@ body.escenario {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  #caine-flota, .mota { animation: none; }
+  .mota { animation: none; }
   .hoja, #cenefa { transition-duration: 0.5s; }
 }
 /* ============================================================
