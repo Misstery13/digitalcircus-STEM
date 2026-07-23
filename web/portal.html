@@ -2,38 +2,57 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cámara del Portal — Digital Circus STEM Escape</title>
-  <link rel="stylesheet" href="css/estilos.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>La Cámara del Portal — Digital Circus STEM Escape</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="css/escenario.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
-<body>
-  <h1>🌀 La Cámara del Portal</h1>
+<body class="sala">
 
-  <main>
-    <div class="hud">
-      <div>
-        <span class="hud-etiqueta">Llaves</span>
-        <div id="hud-llaves"></div>
-      </div>
-    </div>
-
+  <div id="escena-sala">
     <model-viewer id="visor3d"
       src="modelos/portal.glb"
       camera-controls
+      autoplay="false"
       ar
       shadow-intensity="1"
-      alt="Cámara del portal — modelado propio">
+      exposure="1.1"
+      camera-orbit="0deg 78deg 9m"
+      alt="La cámara del portal">
     </model-viewer>
+  </div>
 
-    <p id="subtitulo-caine" aria-live="polite"></p>
-    <p id="indicacion"></p>
+  <div id="vineta" aria-hidden="true"></div>
 
-    <div class="fila-botones">
-      <button id="btn-iniciar">🎬 Activar cámara</button>
-      <button id="btn-mano" hidden>🖐 Mano abierta (respaldo)</button>
+  <div id="capa-ui">
+    <div id="hud-flotante" class="visible">
+      <div class="panel-hud">
+        <span class="hud-etiqueta">Llaves</span>
+        <div id="hud-llaves"></div>
+      </div>
+      <div id="rotulo-sala">
+        <span class="personaje">🌀 La Cámara del Portal</span>
+        <span class="materia">La salida</span>
+      </div>
+      <div class="panel-hud" style="visibility:hidden">
+        <span class="hud-etiqueta">·</span>
+      </div>
     </div>
-  </main>
+
+    <div id="zona-inferior">
+      <p id="subtitulo-caine" aria-live="polite"></p>
+      <p id="indicacion"></p>
+      <div class="fila-botones">
+        <button id="btn-iniciar" class="boton-carpa">Acercarse al portal</button>
+      </div>
+      <div id="modo-botones" hidden>
+        <div class="fila-botones">
+          <button id="btn-mano">🖐 Mano abierta</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <video id="camara" autoplay muted playsinline></video>
 
@@ -46,6 +65,7 @@
     pintarHUD();
     const visor = document.getElementById("visor3d");
     const indicacion = document.getElementById("indicacion");
+    const btnIniciar = document.getElementById("btn-iniciar");
     let abierto = false;
 
     async function activarPortal() {
@@ -62,19 +82,19 @@
       } catch {}
       indicacion.textContent = "✨ El portal se abre...";
       await caineDice("99_final");
-      // El giro: "cruzas"... y despiertas en el pasillo de siempre.
-      sessionStorage.clear();
-      location.href = "index.html";
+      // El giro: cruzas... y despiertas en el circo de siempre.
+      document.body.style.transition = "opacity 1.2s";
+      document.body.style.opacity = "0";
+      setTimeout(() => { sessionStorage.clear(); location.href = "index.html"; }, 1200);
     }
 
-    document.getElementById("btn-iniciar").addEventListener("click", async () => {
-      document.getElementById("btn-iniciar").hidden = true;
+    btnIniciar.addEventListener("click", async () => {
+      btnIniciar.hidden = true;
       indicacion.textContent = "🖐 Mano abierta para activar el portal";
-      const video = document.getElementById("camara");
       try {
-        await iniciarGestos(video, { manoAbierta: activarPortal });
+        await iniciarGestos(document.getElementById("camara"), { manoAbierta: activarPortal });
       } catch {
-        document.getElementById("btn-mano").hidden = false;
+        document.getElementById("modo-botones").hidden = false;
       }
     });
     document.getElementById("btn-mano").addEventListener("click", activarPortal);

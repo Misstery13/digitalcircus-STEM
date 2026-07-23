@@ -15,9 +15,6 @@ import { SALAS, ANIMACIONES, validarRespuesta } from "./config-salas.js";
 import * as estado from "./estado.js";
 import { caineDice } from "./audio-caine.js";
 import { iniciarGestos, escucharRespuesta } from "./gestos.js";
-import { iniciarConfeti } from "./confeti.js";
-
-iniciarConfeti();
 
 const id = parseInt(new URLSearchParams(location.search).get("id") || "1", 10);
 const sala = SALAS[id];
@@ -28,17 +25,9 @@ const visor = document.getElementById("visor3d");
 const btnResponder = document.getElementById("btn-responder");
 const indicacion = document.getElementById("indicacion");
 
-const tituloEl = document.getElementById("titulo-sala");
-if (sala.tituloImg) {
-  tituloEl.innerHTML = "";
-  const img = document.createElement("img");
-  img.src = sala.tituloImg;
-  img.alt = `${sala.emoji} Sala de ${sala.personaje} · ${sala.materia}`;
-  img.className = "titulo-imagen";
-  tituloEl.appendChild(img);
-} else {
-  tituloEl.textContent = `${sala.emoji} Sala de ${sala.personaje} · ${sala.materia}`;
-}
+document.getElementById("nombre-personaje").textContent =
+  `${sala.emoji} ${sala.personaje}`;
+document.getElementById("nombre-materia").textContent = sala.materia;
 document.title = `Sala ${id} — ${sala.personaje} | Digital Circus STEM Escape`;
 visor.src = sala.modelo;
 estado.pintarHUD();
@@ -127,7 +116,7 @@ async function sonrisaDetectada() {
     animar(ANIMACIONES.recompensa);
     await caineDice("gen_sonrisa_recompensa");
     estado.darLlave(id);
-    estado.pintarHUD();
+    estado.pintarHUD(id);
     if (sala.audios.llave) await caineDice(sala.audios.llave);
     indicar("➡️ Pasando a la siguiente sala...");
     setTimeout(() => (location.href = sala.siguiente), 2000);
@@ -144,6 +133,7 @@ async function sonrisaDetectada() {
 // ---- Arranque ----
 async function iniciar() {
   document.getElementById("btn-iniciar").hidden = true;
+  btnResponder.hidden = false;
   indicar("🖐 Muestra tu mano abierta para tocar la puerta");
 
   const video = document.getElementById("camara");

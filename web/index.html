@@ -2,101 +2,236 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Digital Circus STEM Escape</title>
-  <link rel="stylesheet" href="css/estilos.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="css/escenario.css" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
-<body>
+<body class="escenario">
   <div id="capa-glitch" aria-hidden="true"></div>
 
-  <h1>Digital Circus<br />STEM Escape</h1>
+  <!-- 1. EL MUNDO: el circo real en 3D. La cámara vuela de fuera hacia dentro. -->
+  <div id="mundo">
+    <model-viewer id="circo"
+      src="modelos/digital_circus_scene.glb"
+      camera-controls
+      disable-zoom
+      disable-pan
+      disable-tap
+      interaction-prompt="none"
+      interpolation-decay="0"
+      shadow-intensity="0.9"
+      exposure="1.1"
+      camera-orbit="0deg 74deg 26m"
+      field-of-view="42deg"
+      min-camera-orbit="auto auto 0.01m"
+      max-camera-orbit="auto auto 200m"
+      min-field-of-view="4deg"
+      max-field-of-view="120deg"
+      alt="El Circo Digital visto desde fuera">
+    </model-viewer>
+  </div>
 
-  <main>
-    <div class="hud">
-      <div>
+  <div id="atmosfera" aria-hidden="true"></div>
+
+  <!-- 2. CAINE: aparece cuando el telón se abre -->
+  <div id="caine-escena">
+    <div id="caine-flota">
+      <model-viewer id="caine"
+        src="modelos/caine_tadc.glb"
+        camera-controls
+        disable-zoom
+        disable-pan
+        interaction-prompt="none"
+        shadow-intensity="0"
+        exposure="1.2"
+        camera-orbit="0deg 82deg 4.5m"
+        alt="Caine, maestro de ceremonias del Circo Digital">
+      </model-viewer>
+      <div id="caine-respaldo" hidden aria-hidden="true">
+        <div class="ojo"></div>
+        <div class="ojo der"></div>
+        <div class="boca"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3. EL TELÓN: ya dentro del circo, cubre el escenario y se abre -->
+  <div id="telon">
+    <div class="hoja izq"></div>
+    <div class="hoja der"></div>
+    <div id="cenefa" aria-hidden="true"></div>
+  </div>
+
+  <!-- 4. Título de arranque, sobre el circo visto desde fuera -->
+  <div id="titulo-telon">
+    <h1>Digital Circus<small>STEM Escape</small></h1>
+    <button id="btn-entrar" class="boton-carpa">Entrar al circo</button>
+  </div>
+
+  <!-- 5. Interfaz flotante -->
+  <div id="capa-ui">
+    <div id="hud-flotante">
+      <div class="panel-hud">
         <span class="hud-etiqueta">Llaves</span>
         <div id="hud-llaves"></div>
       </div>
-      <div style="flex:1; max-width:240px">
+      <div class="panel-hud">
         <span class="hud-etiqueta">Abstracción</span>
-        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0" aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstracción"></div>
+        <div id="hud-abstraccion" role="progressbar" aria-valuemin="0"
+             aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstraccion"></div>
       </div>
     </div>
 
-    <p id="subtitulo-caine" aria-live="polite"></p>
-
-    <div class="fila-botones">
-      <button id="btn-intro">🎪 Entrar al circo</button>
+    <div id="zona-inferior">
+      <p id="subtitulo-caine" aria-live="polite"></p>
+      <nav id="pasillo-flotante" aria-label="Salas del circo">
+        <a class="puerta" href="sala.html?id=1" data-sala="1">
+          <span class="emoji">🎭</span><span class="nombre">Gangle</span>
+          <span class="materia">Matemáticas</span></a>
+        <a class="puerta" href="sala.html?id=2" data-sala="2">
+          <span class="emoji">🔬</span><span class="nombre">Ragatha</span>
+          <span class="materia">Ciencias</span></a>
+        <a class="puerta" href="sala.html?id=3" data-sala="3">
+          <span class="emoji">🐛</span><span class="nombre">Kinger</span>
+          <span class="materia">Programación</span></a>
+        <a class="puerta" href="sala.html?id=4" data-sala="4">
+          <span class="emoji">⚙️</span><span class="nombre">Zooble</span>
+          <span class="materia">Tecnología</span></a>
+        <a class="puerta" href="sala.html?id=5" data-sala="5">
+          <span class="emoji">🎩</span><span class="nombre">Pomni</span>
+          <span class="materia">Inteligencia Artificial</span></a>
+        <a class="puerta" href="portal.html" id="puerta-portal">
+          <span class="emoji">🌀</span><span class="nombre">Portal</span>
+          <span class="materia">¿La salida?</span></a>
+      </nav>
+      <button id="btn-reset" class="btn-discreto">🔄 Reiniciar progreso (pruebas)</button>
     </div>
-
-    <nav class="pasillo" aria-label="Salas del circo">
-      <a class="puerta" href="sala.html?id=1" data-sala="1">
-        <span class="emoji">🎭</span><span class="nombre">Gangle</span>
-        <span class="materia">Matemáticas</span>
-        <span class="estado"></span>
-      </a>
-      <a class="puerta" href="sala.html?id=2" data-sala="2">
-        <span class="emoji">🔬</span><span class="nombre">Ragatha</span>
-        <span class="materia">Ciencias</span>
-        <span class="estado"></span>
-      </a>
-      <a class="puerta" href="sala.html?id=3" data-sala="3">
-        <span class="emoji">🐛</span><span class="nombre">Kinger</span>
-        <span class="materia">Programación</span>
-        <span class="estado"></span>
-      </a>
-      <a class="puerta" href="sala.html?id=4" data-sala="4">
-        <span class="emoji">⚙️</span><span class="nombre">Zooble</span>
-        <span class="materia">Tecnología</span>
-        <span class="estado"></span>
-      </a>
-      <a class="puerta" href="sala.html?id=5" data-sala="5">
-        <span class="emoji">🎩</span><span class="nombre">Pomni</span>
-        <span class="materia">Inteligencia Artificial</span>
-        <span class="estado"></span>
-      </a>
-      <a class="puerta" href="portal.html" id="puerta-portal">
-        <span class="emoji">🌀</span><span class="nombre">Portal</span>
-        <span class="materia">¿La salida?</span>
-        <span class="estado"></span>
-      </a>
-    </nav>
-
-    <p style="opacity:0.55; font-size:0.8rem; text-align:center">
-      En la instalación física, cada puerta corresponde a un código QR.
-      Esta página es el pasillo (hub) del recorrido.
-    </p>
-
-    <button id="btn-reset" class="btn-discreto">🔄 Reiniciar progreso (pruebas)</button>
-  </main>
+  </div>
 
   <script type="module">
     import { pintarHUD, llaves, todasLasLlaves, resetTodo } from "./js/estado.js";
-    import { caineDice } from "./js/audio-caine.js";
-    import { iniciarConfeti } from "./js/confeti.js";
+    import { caineDice, alHablar } from "./js/audio-caine.js";
+    import { VUELO } from "./js/vuelo.js";
+    import { volarSecuencia, fijarEncuadre, ocultarMateriales }
+      from "./js/camara.js";
 
-    iniciarConfeti();
-    pintarHUD();
+    // ══ AJUSTES DE CÁMARA ═══════════════════════════════════════════
+    // Si el vuelo se queda corto o se pasa, toca SOLO estos números.
+    // Formato: "giro inclinación distancia"  ·  distancia en metros.
+    // Los encuadres viven en js/vuelo.js — ese archivo no se sobrescribe.
+    // Para recalibrar: calibrador.html → "Copiar configuración" → pegar allí.
+    // ════════════════════════════════════════════════════════════════
 
-    const ganadas = llaves();
-    document.querySelectorAll(".puerta[data-sala]").forEach((a) => {
-      const id = Number(a.dataset.sala);
-      const resuelta = ganadas.includes(id);
-      a.classList.toggle("resuelta", resuelta);
-      a.querySelector(".estado").textContent = resuelta ? "🗝 resuelta" : "sin resolver";
-    });
+    const mundo    = document.getElementById("mundo");
+    const circo    = document.getElementById("circo");
+    const telon    = document.getElementById("telon");
+    const titulo   = document.getElementById("titulo-telon");
+    const visorC   = document.getElementById("caine");
+    const respaldo = document.getElementById("caine-respaldo");
+    const escenaC  = document.getElementById("caine-escena");
+    const flota    = document.getElementById("caine-flota");
+    const btn      = document.getElementById("btn-entrar");
+    const hud      = document.getElementById("hud-flotante");
+    const pasillo  = document.getElementById("pasillo-flotante");
 
-    const portal = document.getElementById("puerta-portal");
-    if (todasLasLlaves()) {
-      portal.classList.add("lista");
-      portal.querySelector(".estado").textContent = "✨ abierto";
-    } else {
-      portal.querySelector(".estado").textContent = `faltan ${5 - ganadas.length}`;
+    const esperar = (ms) => new Promise((r) => setTimeout(r, ms));
+
+    // Motas de polvo en el aire (atmósfera barata y efectiva)
+    for (let i = 0; i < 22; i++) {
+      const m = document.createElement("div");
+      m.className = "mota";
+      m.style.left = Math.random() * 100 + "vw";
+      m.style.top = 60 + Math.random() * 40 + "vh";
+      m.style.animationDuration = 9 + Math.random() * 11 + "s";
+      m.style.animationDelay = -Math.random() * 14 + "s";
+      document.body.appendChild(m);
     }
 
-    document.getElementById("btn-intro").addEventListener("click", () => {
-      caineDice("00_intro");
+    // Respaldo si falta caine_tadc.glb
+    visorC.addEventListener("error", () => {
+      visorC.style.display = "none";
+      respaldo.hidden = false;
     });
+    visorC.addEventListener("load", () => {
+      const anims = visorC.availableAnimations || [];
+      if (anims.length) { visorC.animationName = anims[0]; visorC.play(); }
+    });
+
+    // Caine reacciona al volumen real de su voz
+    alHablar((intensidad) => {
+      flota.style.scale = String(1 + intensidad * 0.07);
+      flota.classList.toggle("hablando", intensidad > 0.06);
+      mundo.classList.toggle("desenfocado", intensidad > 0.04);
+    });
+
+    // Encuadre inicial exacto (evita el auto-framing del visor)
+    let volando = false;
+
+    circo.addEventListener("error", (e) =>
+      console.error("[circo] NO se pudo cargar modelos/digital_circus_scene.glb", e));
+
+    circo.addEventListener("load", () => {
+      console.log("[circo] modelo cargado");
+      if (volando) return;          // no pisar el vuelo si el load llega tarde
+      fijarEncuadre(circo, VUELO.fuera);
+      ocultarMateriales(circo, VUELO.ocultar);
+    });
+
+    pintarHUD();
+    const marcarPuertas = () => {
+      const ganadas = llaves();
+      document.querySelectorAll(".puerta[data-sala]").forEach((a) => {
+        a.classList.toggle("resuelta", ganadas.includes(Number(a.dataset.sala)));
+      });
+      if (todasLasLlaves()) {
+        document.getElementById("puerta-portal").classList.add("lista");
+      }
+    };
+    marcarPuertas();
+
+    /** Secuencia completa de entrada. */
+    async function entrar(conIntro) {
+      console.log("[entrada] click recibido");
+      volando = true;
+      btn.disabled = true;
+      titulo.classList.add("fuera");           // el título se desvanece
+      await esperar(300);
+
+      // 1 · vuelo (misma función que usa el calibrador)
+      await volarSecuencia(circo, VUELO, (n) =>
+        console.log(n ? `[vuelo] tramo ${n}` : "[vuelo] terminado"));
+
+      // 2 · ya dentro: aparece el telón del escenario, cerrado
+      console.log("[entrada] telón");
+      document.getElementById("atmosfera").classList.add("puesta");
+      telon.classList.add("presente");
+      hud.classList.add("visible");
+      await esperar(1400);
+
+      // 3 · el telón se abre
+      telon.classList.add("abierto");
+      await esperar(1800);
+
+      // 4 · Caine entra en escena
+      escenaC.classList.add("presente");
+      await esperar(900);
+
+      // 5 · presentación
+      if (conIntro) await caineDice("00_intro");
+      pasillo.classList.add("visible");
+      pintarHUD();
+      marcarPuertas();
+    }
+
+    if (llaves().length > 0) {
+      btn.textContent = "Volver al circo";
+      btn.addEventListener("click", () => entrar(false), { once: true });
+    } else {
+      btn.addEventListener("click", () => entrar(true), { once: true });
+    }
 
     document.getElementById("btn-reset").addEventListener("click", () => {
       resetTodo();
