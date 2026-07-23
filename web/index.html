@@ -107,7 +107,6 @@
           <span class="emoji">🌀</span><span class="nombre">Portal</span>
           <span class="materia">¿La salida?</span></a>
       </nav>
-      <button id="btn-reset" class="btn-discreto">🔄 Reiniciar progreso (pruebas)</button>
     </div>
   </div>
 
@@ -233,9 +232,11 @@
       btn.addEventListener("click", () => entrar(true), { once: true });
     }
 
-    document.getElementById("btn-reset").addEventListener("click", () => {
-      resetTodo();
-      location.reload();
+    // Reinicio oculto para la demo: pulsar R tres veces seguidas.
+    let toquesR = 0;
+    addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() !== "r") { toquesR = 0; return; }
+      if (++toquesR >= 3) { resetTodo(); location.reload(); }
     });
   </script>
 </body>
