@@ -7,6 +7,8 @@
   <link rel="stylesheet" href="css/estilos.css" />
 </head>
 <body>
+  <div id="capa-glitch" aria-hidden="true"></div>
+
   <h1>Digital Circus<br />STEM Escape</h1>
 
   <main>
@@ -31,26 +33,32 @@
       <a class="puerta" href="sala.html?id=1" data-sala="1">
         <span class="emoji">🎭</span><span class="nombre">Gangle</span>
         <span class="materia">Matemáticas</span>
+        <span class="estado"></span>
       </a>
       <a class="puerta" href="sala.html?id=2" data-sala="2">
         <span class="emoji">🔬</span><span class="nombre">Ragatha</span>
         <span class="materia">Ciencias</span>
+        <span class="estado"></span>
       </a>
       <a class="puerta" href="sala.html?id=3" data-sala="3">
         <span class="emoji">🐛</span><span class="nombre">Kinger</span>
         <span class="materia">Programación</span>
+        <span class="estado"></span>
       </a>
       <a class="puerta" href="sala.html?id=4" data-sala="4">
         <span class="emoji">⚙️</span><span class="nombre">Zooble</span>
         <span class="materia">Tecnología</span>
+        <span class="estado"></span>
       </a>
       <a class="puerta" href="sala.html?id=5" data-sala="5">
         <span class="emoji">🎩</span><span class="nombre">Pomni</span>
         <span class="materia">Inteligencia Artificial</span>
+        <span class="estado"></span>
       </a>
       <a class="puerta" href="portal.html" id="puerta-portal">
         <span class="emoji">🌀</span><span class="nombre">Portal</span>
         <span class="materia">¿La salida?</span>
+        <span class="estado"></span>
       </a>
     </nav>
 
@@ -58,17 +66,41 @@
       En la instalación física, cada puerta corresponde a un código QR.
       Esta página es el pasillo (hub) del recorrido.
     </p>
+
+    <button id="btn-reset" class="btn-discreto">🔄 Reiniciar progreso (pruebas)</button>
   </main>
 
   <script type="module">
-    import { pintarHUD, llaves } from "./js/estado.js";
+    import { pintarHUD, llaves, todasLasLlaves, resetTodo } from "./js/estado.js";
     import { caineDice } from "./js/audio-caine.js";
+    import { iniciarConfeti } from "./js/confeti.js";
+
+    iniciarConfeti();
     pintarHUD();
-    if (llaves().length >= 5) {
-      document.getElementById("puerta-portal").classList.add("lista");
+
+    const ganadas = llaves();
+    document.querySelectorAll(".puerta[data-sala]").forEach((a) => {
+      const id = Number(a.dataset.sala);
+      const resuelta = ganadas.includes(id);
+      a.classList.toggle("resuelta", resuelta);
+      a.querySelector(".estado").textContent = resuelta ? "🗝 resuelta" : "sin resolver";
+    });
+
+    const portal = document.getElementById("puerta-portal");
+    if (todasLasLlaves()) {
+      portal.classList.add("lista");
+      portal.querySelector(".estado").textContent = "✨ abierto";
+    } else {
+      portal.querySelector(".estado").textContent = `faltan ${5 - ganadas.length}`;
     }
+
     document.getElementById("btn-intro").addEventListener("click", () => {
       caineDice("00_intro");
+    });
+
+    document.getElementById("btn-reset").addEventListener("click", () => {
+      resetTodo();
+      location.reload();
     });
   </script>
 </body>

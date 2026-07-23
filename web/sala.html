@@ -8,6 +8,8 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body>
+  <div id="capa-glitch" aria-hidden="true"></div>
+
   <h1 id="titulo-sala">Sala</h1>
 
   <main>
@@ -22,13 +24,17 @@
       </div>
     </div>
 
-    <model-viewer id="visor3d"
-      camera-controls
-      autoplay="false"
-      ar
-      shadow-intensity="1"
-      alt="Escena 3D de la sala">
-    </model-viewer>
+    <div class="puerta-3d-wrap" id="puerta3dWrap">
+      <model-viewer id="visor3d"
+        camera-controls
+        ar
+        shadow-intensity="1"
+        alt="Escena 3D de la sala">
+      </model-viewer>
+      <div class="puerta-panel izq"></div>
+      <div class="puerta-panel der"></div>
+    </div>
+    <div class="piso-damero" aria-hidden="true"></div>
 
     <p id="subtitulo-caine" aria-live="polite"></p>
     <p id="indicacion"></p>
@@ -63,6 +69,16 @@
   </main>
 
   <video id="camara" autoplay muted playsinline></video>
+
+  <script>
+    document.body.dataset.sala =
+      new URLSearchParams(location.search).get("id") || "1";
+
+    const visor = document.getElementById("visor3d");
+    setTimeout(() => {
+      if (!visor.src) document.body.classList.add("sin-3d");
+    }, 2000);
+  </script>
   <script type="module" src="js/sala.js"></script>
 </body>
 </html>

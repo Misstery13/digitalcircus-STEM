@@ -11,6 +11,7 @@ export const SALAS = {
     materia: "Matemáticas",
     emoji: "🎭",
     modelo: "modelos/sala1_gangle.glb",
+    tituloImg: "img/titulos/sala1_gangle.png",
     // Respuestas aceptadas (minúsculas, sin acentos). El validador normaliza.
     respuestas: ["ocho", "8"],
     audios: {
