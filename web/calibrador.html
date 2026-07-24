@@ -109,7 +109,7 @@
     // Permite probar otro archivo:  calibrador.html?modelo=prueba.glb
     const archivo = new URLSearchParams(location.search).get("modelo")
                     || "digital_circus_scene.glb";
-    mv.src = "modelos/" + archivo;
+    mv.src = "../assets/modelos/" + archivo;
     document.title = archivo + " — Calibrador";
     const rOrbita = document.getElementById("r-orbita");
     const rObjetivo = document.getElementById("r-objetivo");
@@ -146,7 +146,7 @@
     document.getElementById("r-archivo").textContent = archivo;
     mv.addEventListener("camera-change", actualizar);
     mv.addEventListener("error", () => {
-      aviso.textContent = "No encuentro modelos/" + archivo;
+      aviso.textContent = "No encuentro assets/modelos/" + archivo;
     });
 
     mv.addEventListener("load", () => {

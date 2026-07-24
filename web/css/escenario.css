@@ -28,9 +28,16 @@ body.escenario {
   border: none;
   --poster-color: transparent;
   --progress-bar-color: transparent;
+  transition: opacity 1.2s ease;
 }
 /* Cuando Caine habla, el fondo se desenfoca: profundidad de campo */
 #mundo.desenfocado { filter: blur(3px) brightness(0.65); }
+
+/* Cuando Caine presenta las salas, el 3D da paso a un fondo fijo */
+#mundo.fondo-fijo {
+  background: url("../../assets/img/background.webp") center/cover no-repeat;
+}
+#mundo.fondo-fijo model-viewer { opacity: 0; }
 
 /* Atmósfera encima del 3D: penumbra en los bordes y tinte cálido */
 #atmosfera {
@@ -110,7 +117,7 @@ body.escenario {
 
 .hoja {
   position: absolute; top: 0; bottom: 0; width: 53%;
-  transition: transform 3s cubic-bezier(0.65, 0.02, 0.2, 1);
+  transition: transform 10s cubic-bezier(0.65, 0.02, 0.2, 1);
   will-change: transform;
 
   background:
@@ -167,20 +174,74 @@ body.escenario {
 #telon.abierto .hoja.izq { transform: translateX(-92%) scaleX(0.5) skewY(1.2deg); }
 #telon.abierto .hoja.der { transform: translateX(92%) scaleX(0.5) skewY(-1.2deg); }
 
-/* Cenefa dorada con festón */
+/* Cenefa dorada con festón: arcos grandes y separados, no una tira apretada */
 #cenefa {
-  position: absolute; top: 0; left: 0; right: 0; height: 74px; z-index: 2;
+  position: absolute; top: 0; left: 0; right: 0; height: 120px; z-index: 2;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 30%),
-    repeating-linear-gradient(90deg,
-      #a8781f 0px, #d9ab4e 22px, #f0d68c 34px, #d9ab4e 46px, #a8781f 68px);
-  -webkit-mask-image: radial-gradient(circle 34px at 34px 74px, transparent 34px, #000 34px);
-  mask-image: radial-gradient(circle 34px at 34px 74px, transparent 34px, #000 34px);
-  -webkit-mask-size: 68px 74px; mask-size: 68px 74px; mask-repeat: repeat-x;
-  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.55));
+    /* brillo superior */
+    linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 22%),
+    /* volumen del dorado */
+    linear-gradient(180deg, #f0d68c 0%, #d9ab4e 45%, #a8781f 100%);
+  /* festones grandes: círculos de 60px de radio, separados 120px */
+  -webkit-mask-image: radial-gradient(circle 60px at 60px 120px, transparent 58px, #000 60px);
+  mask-image: radial-gradient(circle 60px at 60px 120px, transparent 58px, #000 60px);
+  -webkit-mask-size: 120px 120px; mask-size: 120px 120px;
+  -webkit-mask-repeat: repeat-x; mask-repeat: repeat-x;
+  filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
   transition: transform 2s ease-in-out;
 }
-#telon.abierto #cenefa { transform: translateY(-34px); }
+/* Bolitas doradas colgando en la punta de cada festón */
+#cenefa::after {
+  content: "";
+  position: absolute;
+  top: 108px; left: 0; right: 0; height: 26px;
+  background: radial-gradient(circle 9px at 60px 8px, #f0d68c 0%, #b8862c 70%, transparent 72%);
+  background-size: 120px 26px;
+  background-repeat: repeat-x;
+  filter: drop-shadow(0 3px 3px rgba(0,0,0,0.5));
+}
+#telon.abierto #cenefa { transform: translateY(-46px); }
+
+/* Reflectores móviles sobre el telón cerrado, como en la intro */
+#luces-telon {
+  position: absolute; inset: 0; z-index: 3;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+#telon.presente #luces-telon { opacity: 1; }
+#telon.abierto #luces-telon { opacity: 0; transition: opacity 1s ease 9s; }
+
+.rayo {
+  position: absolute;
+  bottom: -10%; left: 50%;
+  width: 240px; height: 130%;
+  background: linear-gradient(0deg, rgba(255,240,200,0.55) 0%, transparent 72%);
+  clip-path: polygon(47% 100%, 53% 100%, 100% 0%, 0% 0%);
+  transform-origin: bottom center;
+  mix-blend-mode: screen;
+  filter: blur(1.5px);
+  animation: barrer-rayo 4.5s ease-in-out infinite;
+}
+.rayo.b {
+  left: 22%; width: 200px;
+  background: linear-gradient(0deg, rgba(170,215,255,0.45) 0%, transparent 72%);
+  animation-duration: 5.5s; animation-delay: -2s;
+}
+.rayo.c {
+  left: 78%; width: 200px;
+  animation-duration: 5s; animation-delay: -3.5s;
+}
+.rayo.d {
+  left: 50%; width: 220px;
+  background: linear-gradient(0deg, rgba(255,180,220,0.4) 0%, transparent 72%);
+  animation-duration: 6.2s; animation-delay: -1s;
+}
+@keyframes barrer-rayo {
+  0%, 100% { transform: translateX(-50%) rotate(-48deg); }
+  50%      { transform: translateX(-50%) rotate(48deg); }
+}
 
 #titulo-telon {
   position: fixed; inset: 0; z-index: 60;
@@ -296,6 +357,13 @@ body.escenario {
 .puerta .materia { font-size: 0.6rem; opacity: 0.62; text-align: center; }
 .puerta.lista { border-color: #f0d68c; box-shadow: 0 0 20px rgba(240,214,140,0.45); }
 
+#control-musica { display: flex; align-items: center; gap: 0.5rem; }
+#control-musica button {
+  background: none; border: none; padding: 0;
+  font-size: 1.15rem; line-height: 1; cursor: pointer;
+}
+#control-musica input[type="range"] { width: 70px; accent-color: #f0d68c; }
+
 #hud-llaves { display: flex; gap: 2px; }
 #hud-llaves .llave { font-size: 1.15rem; filter: grayscale(1) opacity(0.3); }
 #hud-llaves .llave.ganada { filter: none; text-shadow: 0 0 10px rgba(240,214,140,0.85); }
@@ -316,6 +384,7 @@ body.escenario {
 @media (prefers-reduced-motion: reduce) {
   .mota { animation: none; }
   .hoja, #cenefa { transition-duration: 0.5s; }
+  .rayo { animation: none; }
 }
 
 /* ============================================================

@@ -11,7 +11,7 @@ export const SALAS = {
     materia: "Matemáticas",
     emoji: "🎭",
     modelo: "", // el .glb tiene la escala rota (247723 unidades) y tapa la habitación
-    tituloImg: "img/titulos/sala1_gangle.png",
+    tituloImg: "../assets/img/titulos/sala1_gangle.png",
     // Respuestas aceptadas (minúsculas, sin acentos). El validador normaliza.
     respuestas: ["ocho", "8"],
     audios: {
@@ -27,8 +27,8 @@ export const SALAS = {
     personaje: "Ragatha",
     materia: "Ciencias",
     emoji: "🔬",
-    modelo: "modelos/ragatha.glb",
-    tituloImg: "img/titulos/sala2_ragatha.png",
+    modelo: "../assets/modelos/ragatha.glb",
+    tituloImg: "../assets/img/titulos/sala2_ragatha.png",
     respuestas: ["h2o", "hache dos o", "agua h2o", "h dos o"],
     audios: {
       pregunta: "s2_pregunta",
@@ -43,8 +43,8 @@ export const SALAS = {
     personaje: "Kinger",
     materia: "Programación",
     emoji: "🐛",
-    modelo: "modelos/tadc_-_kinger.glb",
-    tituloImg: "img/titulos/sala3_kinger.png",
+    modelo: "../assets/modelos/kinger.glb",
+    tituloImg: "../assets/img/titulos/sala3_kinger.png",
     respuestas: ["bug", "bog", "bag"], // variantes fonéticas del reconocedor
     audios: {
       pregunta: "s3_pregunta",
@@ -59,8 +59,8 @@ export const SALAS = {
     personaje: "Zooble",
     materia: "Tecnología",
     emoji: "⚙️",
-    modelo: "modelos/zooble.glb",
-    tituloImg: "img/titulos/sala4_zooble.png",
+    modelo: "../assets/modelos/zooble.glb",
+    tituloImg: "../assets/img/titulos/sala4_zooble.png",
     respuestas: ["cpu", "procesador", "el procesador", "c p u"],
     audios: {
       pregunta: "s4_pregunta",
@@ -75,8 +75,8 @@ export const SALAS = {
     personaje: "Pomni",
     materia: "Inteligencia Artificial",
     emoji: "🎩",
-    modelo: "modelos/pomni_from_the_amazing_digital_circus.glb",
-    tituloImg: "img/titulos/sala5_pomni.png",
+    modelo: "../assets/modelos/pomni.glb",
+    tituloImg: "../assets/img/titulos/sala5_pomni.png",
     respuestas: ["artificial", "inteligencia artificial"],
     audios: {
       pregunta: "s5_pregunta",

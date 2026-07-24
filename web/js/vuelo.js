@@ -34,8 +34,8 @@ export const VUELO = {
   },
 
   // Reparto del tiempo entre los dos tramos (milisegundos)
-  duracionCentrado: 2600,   // fuera → medio
-  duracionEntrada:  3000,   // medio → dentro
+  duracionCentrado: 5100,   // fuera → medio
+  duracionEntrada:  5500,   // medio → dentro
   pausaEnMedio:      350,   // respiro al terminar de centrarse
 
   // Materiales del modelo que deben esconderse (p. ej. la cúpula).

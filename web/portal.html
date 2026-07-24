@@ -12,7 +12,7 @@
 
   <div id="escena-sala">
     <model-viewer id="visor3d"
-      src="modelos/portal.glb"
+      src="../assets/modelos/portal.glb"
       camera-controls
       autoplay="false"
       ar
@@ -61,8 +61,10 @@
     import { caineDice } from "./js/audio-caine.js";
     import { iniciarGestos } from "./js/gestos.js";
     import { ANIMACIONES, TOTAL_LLAVES } from "./js/config-salas.js";
+    import { sonarOurNewHome } from "./js/musica.js";
 
     pintarHUD();
+    if (llaves().length >= TOTAL_LLAVES) sonarOurNewHome();
     const visor = document.getElementById("visor3d");
     const indicacion = document.getElementById("indicacion");
     const btnIniciar = document.getElementById("btn-iniciar");

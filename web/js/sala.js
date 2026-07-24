@@ -15,6 +15,7 @@ import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta } from "./config-salas.js"
 import * as estado from "./estado.js";
 import { caineDice as reproducirVoz } from "./audio-caine.js";
 import { iniciarGestos, escucharRespuesta } from "./gestos.js";
+import { sonarOurNewHome } from "./musica.js";
 
 const id = parseInt(new URLSearchParams(location.search).get("id") || "1", 10);
 const sala = SALAS[id];
@@ -161,6 +162,7 @@ async function procesarRespuesta(dicho) {
 
   if (abstraido) {
     // Game over suave: reset de la sala (sección 2.2)
+    sonarOurNewHome();
     await caineDice("gen_abstraccion_reset");
     estado.resetAbstraccion();
     estado.pintarHUD();

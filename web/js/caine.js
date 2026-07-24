@@ -8,7 +8,7 @@
 
 export const CAINE = {
   // ── ARCHIVO Y ANIMACIONES ────────────────────────────────
-  // Nombre del .glb dentro de web/modelos/
+  // Nombre del .glb dentro de assets/modelos/
   archivo: "caine_animado2.glb",
 
   // Animaciones horneadas en el .glb (herramientas/animar_caine.py).
