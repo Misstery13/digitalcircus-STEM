@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calibrador de cámara — Digital Circus</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin:0; height:100dvh; overflow:hidden; background:#0a0715; color:#f7efdc;
+           font-family:'Atkinson Hyperlegible',system-ui,sans-serif; }
+    model-viewer { width:100%; height:100dvh; background:#0a0715; }
+    #panel { position:fixed; top:10px; left:10px; z-index:10; width:min(380px,94vw);
+             background:rgba(8,5,16,0.94); border:1px solid rgba(240,214,140,0.4);
+             border-radius:12px; padding:13px 15px; font-size:13px;
+             max-height:96dvh; overflow-y:auto; }
+    h2 { margin:0 0 3px; font-size:15px; color:#f0d68c; }
+    .nota { font-size:11.5px; opacity:0.72; line-height:1.5; margin:0 0 9px; }
+    .lectura { font-family:ui-monospace,Consolas,monospace; font-size:12px;
+               background:rgba(255,255,255,0.06); padding:6px 9px; border-radius:6px;
+               margin:4px 0; word-break:break-all; }
+    .lectura b { color:#f0d68c; font-weight:400; }
+    button { font-family:inherit; font-size:12.5px; font-weight:700; padding:7px 11px;
+             margin:3px 3px 3px 0; border-radius:8px;
+             border:1px solid rgba(240,214,140,0.55); background:rgba(240,214,140,0.14);
+             color:#f0d68c; cursor:pointer; }
+    button:hover { background:rgba(240,214,140,0.26); }
+    button.principal { background:#f0d68c; color:#2a1004; border-color:#f7efdc; }
+    #salida { font-family:ui-monospace,Consolas,monospace; font-size:11px; white-space:pre;
+              line-height:1.5; background:#05030b; border:1px solid rgba(240,214,140,0.3);
+              padding:9px; border-radius:8px; margin-top:7px; color:#9fe1cb; overflow-x:auto; }
+    .paso { margin:9px 0 3px; font-weight:700; color:#f0d68c; font-size:12.5px; }
+    #aviso { color:#9fe1cb; font-size:12px; min-height:1.2em; margin-top:5px; }
+    #materiales { max-height:150px; overflow-y:auto; border:1px solid rgba(255,255,255,0.12);
+                  border-radius:7px; padding:6px 8px; margin-top:5px; }
+    #materiales label { display:flex; align-items:center; gap:7px; font-size:11.5px;
+                        padding:2px 0; cursor:pointer; }
+    .fila-slider { display:flex; align-items:center; gap:8px; margin:6px 0; }
+    .fila-slider input[type=range] { flex:1; }
+    .fila-slider span { font-family:ui-monospace,monospace; font-size:11.5px;
+                        min-width:52px; text-align:right; color:#f0d68c; }
+  </style>
+</head>
+<body>
+
+  <model-viewer id="mv"
+    src=""
+    camera-controls
+    interaction-prompt="none"
+    interpolation-decay="0"
+    min-camera-orbit="auto auto 0.01m"
+    max-camera-orbit="auto auto 200m"
+    min-field-of-view="4deg"
+    max-field-of-view="120deg"
+    shadow-intensity="0.9"
+    exposure="1.1"
+    alt="Calibrador">
+  </model-viewer>
+
+  <div id="panel">
+    <h2>Calibrador de cámara</h2>
+    <p class="nota" style="margin-bottom:6px">
+      Archivo: <b id="r-archivo"></b> · para ver otro:
+      <code>?modelo=prueba.glb</code>
+    </p>
+    <p class="nota">
+      Arrastrar = girar · rueda = acercar · <b>clic derecho + arrastrar</b> = mover el
+      centro (así te metes en la carpa). El tope de zoom está quitado.
+    </p>
+
+    <div class="lectura"><b>orbita:</b> <span id="r-orbita">—</span></div>
+    <div class="lectura"><b>objetivo:</b> <span id="r-objetivo">—</span></div>
+    <div class="lectura"><b>fov:</b> <span id="r-fov">—</span></div>
+
+    <div class="fila-slider">
+      <label style="font-size:11.5px">Distancia</label>
+      <input type="range" id="s-radio" min="0.05" max="60" step="0.05" value="26" />
+      <span id="v-radio">26m</span>
+    </div>
+
+    <div class="paso">Ocultar piezas que estorban (la cúpula)</div>
+    <p class="nota" style="margin:2px 0 0">
+      Marca una casilla y mira qué desaparece. Cuando ubiques la cúpula, déjala marcada.
+    </p>
+    <div id="materiales">cargando…</div>
+
+    <div class="paso">1 · Vista de la carpa DESDE FUERA</div>
+    <button id="btn-fuera">Guardar «fuera»</button>
+
+    <div class="paso">2 · Centrada en la carpa, todavía LEJOS</div>
+    <button id="btn-medio">Guardar «medio»</button>
+
+    <div class="paso">3 · Pegada a la carpa (fin del vuelo)</div>
+    <button id="btn-dentro">Guardar «dentro»</button>
+
+    <div class="paso">4 · Comprobar y copiar</div>
+    <button id="btn-probar">Probar el vuelo</button>
+    <button id="btn-copiar" class="principal">Copiar configuración</button>
+
+    <div id="salida">Aún no has guardado ningún encuadre.</div>
+    <div id="aviso"></div>
+  </div>
+
+  <script type="module">
+    import { volarSecuencia } from "./js/camara.js";
+
+    const mv = document.getElementById("mv");
+    // Permite probar otro archivo:  calibrador.html?modelo=prueba.glb
+    const archivo = new URLSearchParams(location.search).get("modelo")
+                    || "digital_circus_scene.glb";
+    mv.src = "modelos/" + archivo;
+    document.title = archivo + " — Calibrador";
+    const rOrbita = document.getElementById("r-orbita");
+    const rObjetivo = document.getElementById("r-objetivo");
+    const rFov = document.getElementById("r-fov");
+    const salida = document.getElementById("salida");
+    const aviso = document.getElementById("aviso");
+    const sRadio = document.getElementById("s-radio");
+    const vRadio = document.getElementById("v-radio");
+    const listaMat = document.getElementById("materiales");
+
+    let guardado = { fuera: null, medio: null, dentro: null };
+    let ocultos = new Set();
+    const originales = new Map();
+
+    function actualizar() {
+      const o = mv.getCameraOrbit(), t = mv.getCameraTarget();
+      rOrbita.textContent =
+        `${(o.theta*180/Math.PI).toFixed(1)}deg ${(o.phi*180/Math.PI).toFixed(1)}deg ${o.radius.toFixed(2)}m`;
+      rObjetivo.textContent = `${t.x.toFixed(2)}m ${t.y.toFixed(2)}m ${t.z.toFixed(2)}m`;
+      rFov.textContent = mv.getFieldOfView().toFixed(1) + "deg";
+      if (document.activeElement !== sRadio) {
+        sRadio.value = Math.min(o.radius, 60);
+        vRadio.textContent = o.radius.toFixed(2) + "m";
+      }
+    }
+
+    sRadio.addEventListener("input", () => {
+      const o = mv.getCameraOrbit();
+      mv.cameraOrbit =
+        `${(o.theta*180/Math.PI).toFixed(2)}deg ${(o.phi*180/Math.PI).toFixed(2)}deg ${sRadio.value}m`;
+      vRadio.textContent = (+sRadio.value).toFixed(2) + "m";
+    });
+
+    document.getElementById("r-archivo").textContent = archivo;
+    mv.addEventListener("camera-change", actualizar);
+    mv.addEventListener("error", () => {
+      aviso.textContent = "No encuentro modelos/" + archivo;
+    });
+
+    mv.addEventListener("load", () => {
+      actualizar();
+      const mats = mv.model?.materials || [];
+      if (!mats.length) { listaMat.textContent = "Este modelo no expone materiales."; return; }
+      listaMat.innerHTML = "";
+      mats.forEach((m, i) => {
+        const factor = m.pbrMetallicRoughness.baseColorFactor.slice();
+        originales.set(i, factor);
+        const nombre = m.name || `material_${i}`;
+        const lab = document.createElement("label");
+        lab.innerHTML = `<input type="checkbox" data-i="${i}" /> <span>${nombre}</span>`;
+        lab.querySelector("input").addEventListener("change", (e) => {
+          const idx = +e.target.dataset.i;
+          const mat = mv.model.materials[idx];
+          const orig = originales.get(idx);
+          if (e.target.checked) {
+            mat.setAlphaMode("BLEND");
+            mat.pbrMetallicRoughness.setBaseColorFactor([orig[0],orig[1],orig[2],0]);
+            ocultos.add(nombre);
+          } else {
+            mat.pbrMetallicRoughness.setBaseColorFactor(orig);
+            mat.setAlphaMode("OPAQUE");
+            ocultos.delete(nombre);
+          }
+          pintarSalida();
+        });
+        listaMat.appendChild(lab);
+      });
+      aviso.textContent = `Modelo cargado · ${mats.length} materiales.`;
+    });
+
+    const capturar = () => ({
+      orbita: rOrbita.textContent,
+      objetivo: rObjetivo.textContent,
+      fov: rFov.textContent,
+    });
+
+    function pintarSalida() {
+      const f = guardado.fuera, m = guardado.medio, d = guardado.dentro;
+      if (!f && !m && !d) return;
+      const bloque = (nombre, e) => e
+        ? `  ${nombre}: {\n    orbita:   "${e.orbita}",\n    objetivo: "${e.objetivo}",\n    fov:      "${e.fov}",\n  },`
+        : `  ${nombre}: { /* sin guardar */ },`;
+      const oc = [...ocultos].map(n => `"${n}"`).join(", ");
+      salida.textContent =
+`export const VUELO = {
+${bloque("fuera", f)}
+${bloque("medio", m)}
+${bloque("dentro", d)}
+  duracionCentrado: 2600,
+  duracionEntrada:  3000,
+  pausaEnMedio:      350,
+  ocultar: [${oc}],
+};`;
+    }
+
+    document.getElementById("btn-fuera").addEventListener("click", () => {
+      guardado.fuera = capturar(); aviso.textContent = "✔ «fuera» guardado."; pintarSalida();
+    });
+    document.getElementById("btn-medio").addEventListener("click", () => {
+      guardado.medio = capturar(); aviso.textContent = "✔ «medio» guardado."; pintarSalida();
+    });
+    document.getElementById("btn-dentro").addEventListener("click", () => {
+      guardado.dentro = capturar(); aviso.textContent = "✔ «dentro» guardado."; pintarSalida();
+    });
+
+    document.getElementById("btn-copiar").addEventListener("click", async () => {
+      if (!guardado.fuera || !guardado.dentro) {
+        aviso.textContent = "Guarda «fuera» y «dentro» primero."; return;
+      }
+      try {
+        await navigator.clipboard.writeText(salida.textContent);
+        aviso.textContent = "✔ Copiado. Pégalo en index.html sobre el bloque VUELO.";
+      } catch {
+        aviso.textContent = "Selecciona el texto de abajo y cópialo a mano.";
+      }
+    });
+
+    document.getElementById("btn-probar").addEventListener("click", async () => {
+      if (!guardado.fuera || !guardado.dentro) {
+        aviso.textContent = "Guarda al menos «fuera» y «dentro»."; return;
+      }
+      // MISMA función que usa index.html: lo que ves aquí es lo que habrá allí
+      const V = {
+        fuera: guardado.fuera,
+        medio: guardado.medio || null,
+        dentro: guardado.dentro,
+        duracionCentrado: 2600,
+        duracionEntrada: 3000,
+        pausaEnMedio: 350,
+      };
+      const textos = { 1: "Tramo 1: centrando…", 2: "Tramo 2: entrando…", 0: "✔ Fin del vuelo." };
+      await volarSecuencia(mv, V, (n) => { aviso.textContent = textos[n]; });
+    });
+
+  </script>
+</body>
+</html>
