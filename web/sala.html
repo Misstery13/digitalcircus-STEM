@@ -9,20 +9,29 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="sala">
+  <div id="capa-glitch" aria-hidden="true"></div>
 
   <div id="escena-sala">
+    <div class="habitacion" aria-hidden="true">
+      <div class="hab-techo"></div>
+      <div class="hab-pared izq"></div>
+      <div class="hab-pared der"></div>
+      <div class="hab-fondo"></div>
+      <div class="hab-piso"></div>
+      <div class="hab-luz"></div>
+    </div>
     <model-viewer id="visor3d"
       camera-controls
-      autoplay="false"
       ar
       shadow-intensity="1"
       exposure="1.05"
       alt="Escena 3D de la sala">
     </model-viewer>
+    <div class="puerta-escena izq" aria-hidden="true"></div>
+    <div class="puerta-escena der" aria-hidden="true"></div>
   </div>
 
   <div id="vineta" aria-hidden="true"></div>
-
   <div id="capa-ui">
     <div id="hud-flotante" class="visible">
       <div class="panel-hud">
@@ -39,17 +48,18 @@
              aria-valuemax="4" aria-valuenow="0" aria-label="Nivel de abstraccion"></div>
       </div>
     </div>
-
     <div id="zona-inferior">
+      <div id="pregunta-fija" aria-live="polite">
+        <span class="etiqueta">El reto</span>
+        <p class="texto"></p>
+      </div>
       <p id="subtitulo-caine" aria-live="polite"></p>
       <p id="indicacion"></p>
-
       <div class="fila-botones">
         <button id="btn-iniciar" class="boton-carpa">Comenzar</button>
         <button id="btn-responder" class="boton-carpa" hidden>🎤 Responder</button>
       </div>
-
-      <div id="modo-botones" hidden>
+      <div id="modo-botones">
         <div class="fila-botones">
           <button id="btn-mano">🖐 Mano abierta</button>
           <button id="btn-pulgar">👍 Pulgar arriba</button>
@@ -61,6 +71,15 @@
   </div>
 
   <video id="camara" autoplay muted playsinline></video>
+
+  <script>
+    document.body.dataset.sala =
+      new URLSearchParams(location.search).get("id") || "1";
+    const visor = document.getElementById("visor3d");
+    setTimeout(() => {
+      if (!visor.src) document.body.classList.add("sin-3d");
+    }, 2000);
+  </script>
   <script type="module" src="js/sala.js"></script>
 </body>
 </html>

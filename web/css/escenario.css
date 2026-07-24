@@ -317,6 +317,7 @@ body.escenario {
   .mota { animation: none; }
   .hoja, #cenefa { transition-duration: 0.5s; }
 }
+
 /* ============================================================
    SALAS Y PORTAL — misma lógica: la escena es la pantalla
    ============================================================ */
@@ -456,4 +457,783 @@ body[data-abstraccion="4"] {
 @media (prefers-reduced-motion: reduce) {
   body[data-abstraccion="3"], body[data-abstraccion="4"] { animation: none; }
   #indicacion { animation: none; }
+}
+
+/* ============================================================
+   §2.2 — Glitch por capa superpuesta.
+   Anula el filter sobre <body>: con 10 elementos position:fixed
+   en este layout, un filter/transform en body los reancla al
+   body en vez de a la ventana y descoloca toda la interfaz.
+   Mismo efecto visual, sin ese efecto secundario, y más rápido
+   (no repinta la página entera en cada frame).
+   ============================================================ */
+
+body[data-abstraccion] { filter: none !important; animation: none !important; }
+
+#capa-glitch {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 70;
+  opacity: 0;
+  mix-blend-mode: overlay;
+  transition: opacity 0.4s ease;
+  background:
+    repeating-linear-gradient(0deg, rgba(255,255,255,0.06) 0 2px, transparent 2px 4px),
+    repeating-linear-gradient(90deg, rgba(200,50,43,0.15) 0 1px, transparent 1px 3px);
+}
+
+body[data-abstraccion="1"] #capa-glitch { opacity: 0.18; }
+body[data-abstraccion="2"] #capa-glitch {
+  opacity: 0.34;
+  animation: glitch-desfase 2.2s infinite steps(2);
+}
+body[data-abstraccion="3"] #capa-glitch {
+  opacity: 0.52;
+  animation: glitch-desfase 1.1s infinite steps(2);
+  filter: hue-rotate(25deg);
+}
+body[data-abstraccion="4"] #capa-glitch {
+  opacity: 0.75;
+  animation: glitch-desfase 0.4s infinite steps(2);
+  filter: hue-rotate(60deg) contrast(1.4);
+}
+
+@keyframes glitch-desfase {
+  0%   { transform: translate(0, 0); }
+  50%  { transform: translate(3px, -2px); }
+  100% { transform: translate(-2px, 2px); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #capa-glitch { animation: none !important; }
+}
+
+.puerta.resuelta { border-color: var(--dorado, #d9a441); }
+
+.btn-discreto {
+  display: block;
+  margin: 0.8rem auto 0;
+  font-family: inherit;
+  font-size: 0.72rem;
+  padding: 0.3rem 0.9rem;
+  background: transparent;
+  border: 1px solid rgba(244, 232, 208, 0.3);
+  color: rgba(239, 233, 220, 0.6);
+  border-radius: 999px;
+  cursor: pointer;
+}
+.btn-discreto:hover { border-color: #d9a441; color: #d9a441; }
+
+/* ============================================================
+   Correcciones sobre el layout de sala
+   ============================================================ */
+
+/* El atributo hidden debe ganarle a cualquier display del layout.
+   #modo-botones tiene display:flex, que anula el hidden del HTML
+   y deja los botones de emergencia visibles antes de tiempo. */
+[hidden] { display: none !important; }
+
+/* Llaves del HUD: separar opacity del filter para poder animarlas,
+   y subir la opacidad de las no ganadas (0.3 se pierde sobre el
+   panel oscuro). */
+#hud-llaves { gap: 5px; align-items: center; }
+#hud-llaves .llave {
+  font-size: 1.3rem;
+  line-height: 1;
+  filter: grayscale(1);
+  opacity: 0.4;
+  transition: opacity 0.3s ease, filter 0.3s ease, transform 0.3s ease;
+}
+#hud-llaves .llave.ganada {
+  filter: none;
+  opacity: 1;
+  transform: scale(1.1);
+  text-shadow: 0 0 10px rgba(240, 214, 140, 0.85);
+}
+#hud-llaves .llave.ganada.nueva { animation: llave-rebote 0.5s ease; }
+@keyframes llave-rebote {
+  0%   { transform: scale(0.5) rotate(-20deg); opacity: 0; }
+  60%  { transform: scale(1.35) rotate(10deg); }
+  100% { transform: scale(1.1) rotate(0deg); opacity: 1; }
+}
+
+
+/* ============================================================
+   Título de sala como imagen + escena enmarcada con puertas
+   ============================================================ */
+
+#rotulo-sala.con-imagen {
+  background: none;
+  backdrop-filter: none;
+  border: none;
+  padding: 0;
+  top: 0.2rem;
+}
+.titulo-imagen {
+  display: block;
+  width: clamp(140px, 19vw, 230px);
+  height: auto;
+  filter: drop-shadow(0 8px 20px rgba(0, 0, 0, 0.85));
+}
+
+/* La escena es una ventana enmarcada, no la pantalla completa */
+body.sala #escena-sala {
+  inset: clamp(145px, 21vh, 195px)
+         clamp(20px, 11vw, 220px)
+         clamp(225px, 33vh, 300px);
+  border-radius: 20px;
+  overflow: hidden;
+  border: 2px solid rgba(240, 214, 140, 0.45);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.75),
+              inset 0 0 90px rgba(0, 0, 0, 0.5);
+  background: radial-gradient(ellipse at 50% 62%, #1b1430 0%, #06040d 78%);
+}
+
+/* Viñeta más suave: con la escena enmarcada ya no hace falta tanto */
+body.sala #vineta {
+  background: radial-gradient(ellipse 85% 75% at 50% 45%,
+    transparent 55%, rgba(6, 4, 13, 0.55) 100%);
+}
+
+/* La caja de Caine no debe ocupar espacio cuando está vacía */
+#subtitulo-caine:empty { display: none; }
+
+/* ---- Puertas del circo sobre la escena (§3: mano abierta) ---- */
+.puerta-escena {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 50%;
+  z-index: 4;
+  background:
+    linear-gradient(90deg,
+      rgba(0,0,0,0.55) 0%, rgba(0,0,0,0) 22%,
+      rgba(0,0,0,0) 78%, rgba(0,0,0,0.55) 100%),
+    repeating-linear-gradient(45deg, #7d1f1c 0 20px, #4d1010 20px 40px);
+  transition: transform 1.1s cubic-bezier(.6, -0.08, .3, 1.05),
+              opacity 0.5s ease 0.6s;
+}
+.puerta-escena.izq { left: 0; }
+.puerta-escena.der { right: 0; }
+
+.puerta-escena::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  width: 14px;
+  height: 54px;
+  border-radius: 8px;
+  transform: translateY(-50%);
+  background: linear-gradient(180deg, #f7efdc, #f0d68c 45%, #8a6420);
+  box-shadow: 0 0 16px rgba(240, 214, 140, 0.6);
+}
+.puerta-escena.izq::after { right: 16px; }
+.puerta-escena.der::after { left: 16px; }
+
+/* Rendija de luz entre las dos hojas */
+body.sala #escena-sala::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 3px;
+  transform: translateX(-50%);
+  z-index: 5;
+  pointer-events: none;
+  background: linear-gradient(180deg, transparent,
+    rgba(240, 214, 140, 0.7), transparent);
+  transition: opacity 0.5s ease;
+}
+
+#escena-sala.abierta .puerta-escena.izq { transform: translateX(-101%); }
+#escena-sala.abierta .puerta-escena.der { transform: translateX(101%); }
+#escena-sala.abierta .puerta-escena { opacity: 0; }
+#escena-sala.abierta::after { opacity: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  .puerta-escena { transition-duration: 0.3s; }
+}
+
+/* ---- Subtítulo de Caine: ahora sostiene la pregunta ---- */
+body.sala #subtitulo-caine {
+  max-width: min(62ch, 78vw);
+  font-size: clamp(0.9rem, 1.9vw, 1.05rem);
+  line-height: 1.45;
+  padding: 0.75rem 1.4rem;
+}
+body.sala #subtitulo-caine:empty { display: none; }
+
+/* Respiro entre el marco y los controles */
+body.sala #zona-inferior { gap: 0.7rem; padding-bottom: 0.6rem; }
+
+/* La cámara no debe pisar el campo de respuesta */
+body.sala #camara {
+  right: 18px;
+  bottom: 18px;
+  width: clamp(70px, 8vw, 98px);
+}
+
+/* Los botones de respaldo, visualmente secundarios */
+#modo-botones { opacity: 0.7; transition: opacity 0.2s; }
+#modo-botones:hover, #modo-botones:focus-within { opacity: 1; }
+
+/* ---- Ajuste de posición: título más abajo, marco acompañando ---- */
+#rotulo-sala.con-imagen { top: clamp(0.7rem, 2.2vh, 1.6rem); }
+
+.titulo-imagen { width: clamp(130px, 17vw, 210px); }
+
+body.sala #escena-sala {
+  inset: clamp(150px, 22vh, 200px)
+         clamp(20px, 11vw, 220px)
+         clamp(225px, 33vh, 300px);
+}
+
+/* ============================================================
+   Realimentación visual de respuesta (§2.3)
+   ============================================================ */
+
+#subtitulo-caine.es-acierto {
+  border-color: #7ad48a;
+  background: rgba(20, 60, 30, 0.85);
+}
+#subtitulo-caine.es-fallo {
+  border-color: #d9534f;
+  background: rgba(70, 18, 16, 0.85);
+}
+
+#escena-sala.acierto { animation: destello-acierto 1.1s ease; }
+@keyframes destello-acierto {
+  0%   { box-shadow: 0 24px 70px rgba(0,0,0,.75), inset 0 0 90px rgba(0,0,0,.5); }
+  22%  { box-shadow: 0 0 80px 14px rgba(240,214,140,.9), inset 0 0 100px rgba(240,214,140,.4);
+         border-color: #f0d68c; }
+  100% { box-shadow: 0 24px 70px rgba(0,0,0,.75), inset 0 0 90px rgba(0,0,0,.5); }
+}
+
+#escena-sala.fallo { animation: sacudir-fallo 0.55s cubic-bezier(.36,.07,.19,.97); }
+@keyframes sacudir-fallo {
+  0%, 100% { transform: translateX(0); border-color: rgba(240,214,140,.45); }
+  15%      { transform: translateX(-9px); border-color: #d9534f; }
+  35%      { transform: translateX(8px);  border-color: #d9534f; }
+  55%      { transform: translateX(-6px); border-color: #d9534f; }
+  75%      { transform: translateX(4px);  border-color: #d9534f; }
+}
+
+/* ============================================================
+   HABITACIÓN — decorado en perspectiva por sala (§4)
+   Construida con CSS: no depende de los .glb, que son
+   personajes sueltos sin ambientación.
+   Caja de 5 caras: techo, dos paredes laterales, fondo y piso.
+   ============================================================ */
+
+body {
+  --hab-pared: #7a2f18;
+  --hab-pared-alta: #c06822;
+  --hab-raya: rgba(0, 0, 0, 0.16);
+  --hab-zocalo: #4d1010;
+  --hab-piso-a: #f5d6c3;
+  --hab-piso-b: #4a2c20;
+  --hab-luz: #ffd9a0;
+}
+
+/* Sala 1 · Gangle · teatral, terracota cálido */
+body[data-sala="1"] {
+  --hab-pared: #8f3a1a;
+  --hab-pared-alta: #c06822;
+  --hab-zocalo: #5a1a10;
+  --hab-piso-a: #f5d6c3;
+  --hab-piso-b: #4a2c20;
+  --hab-luz: #ffd9a0;
+}
+/* Sala 2 · Ragatha · costurero, rosa apagado */
+body[data-sala="2"] {
+  --hab-pared: #7d4a5e;
+  --hab-pared-alta: #b87a90;
+  --hab-zocalo: #4a2634;
+  --hab-piso-a: #f0dfe4;
+  --hab-piso-b: #4a2c38;
+  --hab-luz: #ffd4e2;
+}
+/* Sala 3 · Kinger · fortaleza de almohadas, morado */
+body[data-sala="3"] {
+  --hab-pared: #3f2f6b;
+  --hab-pared-alta: #6b52a8;
+  --hab-zocalo: #241a42;
+  --hab-piso-a: #ded4f0;
+  --hab-piso-b: #2b2050;
+  --hab-luz: #c9b6ff;
+}
+/* Sala 4 · Zooble · piezas y engranajes, turquesa */
+body[data-sala="4"] {
+  --hab-pared: #1d5a5e;
+  --hab-pared-alta: #2f8f8c;
+  --hab-zocalo: #123638;
+  --hab-piso-a: #d8efec;
+  --hab-piso-b: #17403f;
+  --hab-luz: #9ff0e4;
+}
+/* Sala 5 · Pomni · sobria, azul digital */
+body[data-sala="5"] {
+  --hab-pared: #2a2350;
+  --hab-pared-alta: #4a3f80;
+  --hab-zocalo: #191436;
+  --hab-piso-a: #e2dcf5;
+  --hab-piso-b: #1e1840;
+  --hab-luz: #b9a8ff;
+}
+
+.habitacion {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  background: var(--hab-zocalo);
+}
+
+/* Techo: trapecio que se aleja */
+.hab-techo {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 15%;
+  clip-path: polygon(0 0, 100% 0, 78% 100%, 22% 100%);
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--hab-zocalo) 80%, #000) 0%,
+    var(--hab-pared) 100%);
+}
+
+/* Paredes laterales: trapecios hacia el centro */
+.hab-pared {
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 22%;
+  background:
+    repeating-linear-gradient(90deg,
+      transparent 0 26px, var(--hab-raya) 26px 52px),
+    linear-gradient(180deg, var(--hab-pared-alta), var(--hab-pared) 70%);
+}
+.hab-pared.izq {
+  left: 0;
+  clip-path: polygon(0 0, 100% 15%, 100% 62%, 0 100%);
+  filter: brightness(0.72);
+}
+.hab-pared.der {
+  right: 0;
+  clip-path: polygon(0 15%, 100% 0, 100% 100%, 0 62%);
+  filter: brightness(0.86);
+}
+
+/* Pared del fondo, con zócalo */
+.hab-fondo {
+  position: absolute;
+  left: 22%; right: 22%;
+  top: 15%; bottom: 38%;
+  background:
+    linear-gradient(180deg, transparent 0 88%, var(--hab-zocalo) 88% 100%),
+    repeating-linear-gradient(90deg,
+      transparent 0 30px, var(--hab-raya) 30px 60px),
+    linear-gradient(180deg, var(--hab-pared-alta), var(--hab-pared) 75%);
+  box-shadow: inset 0 -22px 40px rgba(0, 0, 0, 0.45);
+}
+
+/* Piso de damero en perspectiva */
+.hab-piso {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: 38%;
+  clip-path: polygon(22% 0, 78% 0, 100% 100%, 0 100%);
+  perspective: 150px;
+  perspective-origin: 50% 0%;
+  overflow: hidden;
+}
+.hab-piso::before {
+  content: "";
+  position: absolute;
+  inset: -25% -70% -40%;
+  transform: rotateX(64deg);
+  transform-origin: 50% 0%;
+  background-color: var(--hab-piso-a);
+  background-image:
+    linear-gradient(45deg, var(--hab-piso-b) 25%, transparent 25% 75%, var(--hab-piso-b) 75%),
+    linear-gradient(45deg, var(--hab-piso-b) 25%, transparent 25% 75%, var(--hab-piso-b) 75%);
+  background-size: 58px 58px;
+  background-position: 0 0, 29px 29px;
+}
+.hab-piso::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg,
+    color-mix(in srgb, var(--hab-zocalo) 90%, transparent) 0%,
+    transparent 45%);
+}
+
+/* Luz de foco: da volumen a toda la caja */
+.hab-luz {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(ellipse 55% 45% at 50% 38%,
+      color-mix(in srgb, var(--hab-luz) 30%, transparent) 0%,
+      transparent 70%),
+    radial-gradient(ellipse 90% 80% at 50% 45%,
+      transparent 45%, rgba(6, 4, 13, 0.72) 100%);
+}
+
+/* El modelo va por delante del decorado */
+#escena-sala model-viewer {
+  position: relative;
+  z-index: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #escena-sala.acierto, #escena-sala.fallo { animation: none; }
+}
+
+/* ============================================================
+   FUERA DEL MARCO — el circo alrededor de la escena.
+   El fondo toma el color de la sala activa, y el marco lleva
+   una guirnalda de bombillas estilo marquesina de feria.
+   ============================================================ */
+
+body.sala {
+  background:
+    /* halo del color de la sala, detrás del marco */
+    radial-gradient(ellipse 62% 48% at 50% 40%,
+      color-mix(in srgb, var(--hab-luz) 22%, transparent) 0%,
+      transparent 68%),
+    /* rayas de carpa muy tenues */
+    repeating-linear-gradient(102deg,
+      rgba(255, 255, 255, 0.03) 0 46px, transparent 46px 92px),
+    /* base violeta de circo nocturno, no negro plano */
+    linear-gradient(180deg, #24123f 0%, #150c2b 42%, #08051a 100%);
+}
+
+/* Cenefa de carpa en el borde superior */
+body.sala::before {
+  content: "";
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  height: 9px;
+  z-index: 30;
+  pointer-events: none;
+  background: repeating-linear-gradient(90deg,
+    #c8322b 0 44px, #f4e8d0 44px 88px);
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.6);
+}
+
+/* Confeti de colores flotando en el fondo */
+body.sala::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  background-image:
+    radial-gradient(circle 7px at 9%  20%, #d63384 0 7px, transparent 8px),
+    radial-gradient(circle 5px at 91% 26%, #3fb8c4 0 5px, transparent 6px),
+    radial-gradient(circle 6px at 5%  62%, #f0d68c 0 6px, transparent 7px),
+    radial-gradient(circle 4px at 95% 68%, #6b3fa0 0 4px, transparent 5px),
+    radial-gradient(circle 5px at 16% 88%, #4de3c1 0 5px, transparent 6px),
+    radial-gradient(circle 6px at 84% 90%, #c8322b 0 6px, transparent 7px),
+    radial-gradient(circle 4px at 22% 44%, #f4e8d0 0 4px, transparent 5px),
+    radial-gradient(circle 5px at 78% 48%, #d9a441 0 5px, transparent 6px);
+  animation: flotar-confeti 11s ease-in-out infinite alternate;
+}
+@keyframes flotar-confeti {
+  from { transform: translateY(0) rotate(0deg); }
+  to   { transform: translateY(-22px) rotate(1.5deg); }
+}
+
+/* Guirnalda de bombillas alrededor de la escena */
+#escena-sala::before {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 16px;
+  z-index: 6;
+  pointer-events: none;
+  padding: 13px;
+  background:
+    radial-gradient(circle at 50% 50%,
+      #fff8e0 0 2.6px,
+      color-mix(in srgb, var(--hab-luz) 75%, #f0d68c) 2.6px 4.2px,
+      transparent 5.4px);
+  background-size: 30px 30px;
+  filter: drop-shadow(0 0 6px color-mix(in srgb, var(--hab-luz) 75%, transparent));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  animation: marquesina 2.4s ease-in-out infinite;
+}
+@keyframes marquesina {
+  0%, 100% { opacity: 0.78; }
+  50%      { opacity: 1; }
+}
+
+/* La viñeta ya no debe apagar el color del fondo */
+body.sala #vineta {
+  background: radial-gradient(ellipse 95% 85% at 50% 45%,
+    transparent 62%, rgba(8, 5, 26, 0.45) 100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.sala::after, #escena-sala::before { animation: none; }
+}
+
+/* ============================================================
+   Panel fijo del reto — la pregunta se queda toda la sala
+   ============================================================ */
+
+#pregunta-fija {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  z-index: 3;
+  width: min(76%, 640px);
+  padding: 0.55rem 1.2rem 0.7rem;
+  background: rgba(8, 5, 26, 0.88);
+  backdrop-filter: blur(8px);
+  border: 2px solid color-mix(in srgb, var(--hab-luz) 65%, #f0d68c);
+  border-radius: 14px;
+  box-shadow: 0 8px 26px rgba(0, 0, 0, 0.6),
+              0 0 24px color-mix(in srgb, var(--hab-luz) 22%, transparent);
+  text-align: center;
+  opacity: 0;
+  transform: translateX(-50%) translateY(-14px);
+  pointer-events: none;
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+#pregunta-fija.visible {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+#pregunta-fija .etiqueta {
+  display: block;
+  font-size: 0.56rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--hab-luz) 85%, #f0d68c);
+  margin-bottom: 0.15rem;
+}
+#pregunta-fija .texto {
+  margin: 0;
+  color: #f7efdc;
+  font-size: clamp(0.8rem, 1.6vw, 0.98rem);
+  line-height: 1.4;
+}
+
+/* El subtítulo pasa a ser solo la reacción de Caine */
+body.sala #subtitulo-caine {
+  font-style: italic;
+  max-width: min(56ch, 74vw);
+}
+
+/* ---- El panel del reto pasa fuera del marco ---- */
+#pregunta-fija {
+  position: static;
+  width: min(80ch, 88vw);
+  max-height: 0;
+  margin: 0;
+  padding: 0 1.2rem;
+  overflow: hidden;
+  transform: none;
+  transition: max-height 0.45s ease, opacity 0.4s ease,
+              padding 0.45s ease, margin 0.45s ease;
+}
+#pregunta-fija.visible {
+  max-height: 9rem;
+  padding: 0.5rem 1.2rem 0.65rem;
+  margin-bottom: 0.1rem;
+  transform: none;
+}
+
+/* Un poco más de sitio abajo para el panel */
+body.sala #escena-sala {
+  inset: clamp(150px, 22vh, 200px)
+         clamp(20px, 11vw, 220px)
+         clamp(265px, 38vh, 340px);
+}
+
+
+/* ============================================================
+   MÓVIL EN VERTICAL — reordena el HUD y ajusta proporciones
+   ============================================================ */
+
+@media (max-width: 720px) {
+
+  /* El HUD pasa a dos filas: título arriba, indicadores debajo */
+  body.sala #hud-flotante {
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    padding-top: 0.2rem;
+  }
+  body.sala #rotulo-sala {
+    position: static;
+    order: -1;
+    width: 100%;
+    transform: none;
+  }
+  body.sala #rotulo-sala.con-imagen { top: auto; }
+  .titulo-imagen {
+    width: min(58vw, 250px);
+    margin: 0 auto;
+  }
+  body.sala .panel-hud { padding: 0.3rem 0.8rem; }
+
+  /* El marco: rectángulo ancho pegado a los bordes */
+  body.sala #escena-sala {
+    inset: auto 10px auto 10px;
+    top: clamp(120px, 20vh, 190px);
+    height: min(42vh, 300px);
+    bottom: auto;
+    border-radius: 16px;
+  }
+
+  /* Bombillas más juntas y pequeñas */
+  #escena-sala::before {
+    padding: 10px;
+    background-size: 22px 22px;
+  }
+
+  /* Los controles arrancan justo debajo del marco */
+  body.sala #zona-inferior {
+    justify-content: flex-end;
+    gap: 0.5rem;
+    padding-bottom: 0.4rem;
+  }
+
+  /* La cámara, pequeña y arriba a la derecha: no estorba */
+  body.sala #camara {
+    top: 78px;
+    right: 10px;
+    bottom: auto;
+    width: 62px;
+    border-width: 2px;
+  }
+
+  /* Textos y botones a escala de móvil */
+  #pregunta-fija .texto { font-size: 0.82rem; line-height: 1.35; }
+  #pregunta-fija.visible { max-height: 11rem; padding: 0.45rem 0.9rem 0.55rem; }
+  body.sala #subtitulo-caine {
+    font-size: 0.82rem;
+    padding: 0.55rem 0.9rem;
+    max-width: 94vw;
+  }
+  body.sala #indicacion { font-size: 0.78rem; padding: 0.4rem 0.9rem; }
+  .boton-carpa { font-size: 1rem; padding: 0.6rem 1.6rem; }
+  #modo-botones button { font-size: 0.76rem; padding: 0.38rem 0.75rem; }
+  #respuesta-texto { width: min(94vw, 340px); }
+
+  /* Menos confeti y menos rayas: en pantalla chica satura */
+  body.sala::after { opacity: 0.3; }
+  body.sala::before { height: 6px; }
+}
+
+/* Pantallas muy bajas (móvil apaisado): el marco se encoge */
+@media (max-height: 520px) and (orientation: landscape) {
+  body.sala #escena-sala {
+    top: clamp(70px, 16vh, 110px);
+    height: min(46vh, 220px);
+  }
+  .titulo-imagen { width: min(30vw, 160px); }
+  body.sala #camara { width: 52px; top: 62px; }
+}
+
+/* ---- Correcciones móvil: HUD fuera del marco, marco apaisado ---- */
+@media (max-width: 720px) {
+
+  /* El HUD ocupa su propia franja arriba y no crece */
+  body.sala #capa-ui { justify-content: flex-start; }
+  body.sala #hud-flotante {
+    flex: 0 0 auto;
+    align-items: center;
+    row-gap: 0.3rem;
+  }
+
+  /* Título más compacto: deja sitio a las llaves */
+  .titulo-imagen { width: min(46vw, 190px); }
+
+  /* Marco: rectángulo ancho, no cuadrado */
+  body.sala #escena-sala {
+    top: clamp(150px, 25vh, 215px);
+    height: clamp(150px, 26vh, 210px);
+    left: 8px;
+    right: 8px;
+  }
+
+  /* Los controles se anclan abajo */
+  body.sala #zona-inferior {
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    padding: 0 8px 0.5rem;
+  }
+
+  /* La cámara baja al hueco libre entre el marco y los botones */
+  body.sala #camara {
+    top: auto;
+    bottom: 12px;
+    right: 8px;
+    width: 54px;
+  }
+}
+
+/* ---- Ajuste final móvil: cerrar el hueco y liberar la cámara ---- */
+@media (max-width: 720px) {
+
+  /* El marco crece y baja: el hueco se reparte mejor */
+  body.sala #escena-sala {
+    top: clamp(140px, 23vh, 200px);
+    height: clamp(190px, 34vh, 290px);
+  }
+
+  /* Los controles suben un poco y dejan sitio al texto */
+  body.sala #zona-inferior {
+    bottom: 0;
+    padding-bottom: 0.9rem;
+    gap: 0.45rem;
+  }
+
+  /* La cámara, arriba a la derecha junto al HUD */
+  body.sala #camara {
+    top: 12px;
+    right: 10px;
+    bottom: auto;
+    width: 50px;
+    border-width: 2px;
+    z-index: 25;
+  }
+
+  /* El campo de respuesta no compite con la cámara */
+  #respuesta-texto { width: min(90vw, 320px); }
+}
+
+/* ---- Retoques finales móvil ---- */
+@media (max-width: 720px) {
+  body.sala #escena-sala { height: clamp(170px, 28vh, 240px); }
+}
+
+/* Sin vídeo, la cámara no debe verse como un agujero negro */
+body.sin-camara #camara { display: none; }
+
+/* ============================================================
+   Ajuste de los títulos con los cinco PNG definitivos
+   ============================================================ */
+
+/* Sombra más sutil: al 85% las piezas densas (engranajes,
+   circuitos) suman sombras entre sí y parecen un fondo sólido. */
+.titulo-imagen {
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
+}
+
+/* Kinger es más apaisado que los demás (687x363 vs 612x408):
+   se le da más ancho para que los cinco ocupen alto similar. */
+body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
+
+@media (max-width: 720px) {
+  body[data-sala="3"] .titulo-imagen { width: min(56vw, 230px); }
 }
