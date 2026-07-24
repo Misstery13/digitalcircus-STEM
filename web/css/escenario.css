@@ -95,7 +95,11 @@ body.escenario {
   --progress-bar-color: transparent;
 }
 
-/* ---- TELÓN ---- */
+/* ---- TELÓN ----------------------------------------------------
+   Terciopelo con pliegues irregulares: varias capas de degradado
+   con periodos distintos rompen la uniformidad, más brillos finos
+   y sombra profunda en los huecos.
+   --------------------------------------------------------------- */
 
 #telon {
   position: fixed; inset: 0; z-index: 50; pointer-events: none;
@@ -106,25 +110,74 @@ body.escenario {
 
 .hoja {
   position: absolute; top: 0; bottom: 0; width: 53%;
-  background:
-    linear-gradient(90deg, rgba(0,0,0,0.5), transparent 18%, transparent 82%, rgba(0,0,0,0.6)),
-    repeating-linear-gradient(90deg,
-      #4d1010 0px, #7d1f1c 20px, #a82b26 40px, #7d1f1c 60px, #4d1010 84px);
-  box-shadow: inset 0 0 140px rgba(0,0,0,0.8);
   transition: transform 3s cubic-bezier(0.65, 0.02, 0.2, 1);
   will-change: transform;
+
+  background:
+    /* 1 · sombra de los extremos, da volumen al conjunto */
+    linear-gradient(90deg,
+      rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.12) 12%,
+      transparent 40%, transparent 60%,
+      rgba(0,0,0,0.20) 88%, rgba(0,0,0,0.7) 100%),
+
+    /* 2 · caída de luz: más claro arriba, penumbra abajo */
+    linear-gradient(180deg,
+      rgba(255,190,150,0.16) 0%, transparent 22%,
+      transparent 62%, rgba(0,0,0,0.42) 100%),
+
+    /* 3 · brillos finos en la cresta de cada pliegue */
+    repeating-linear-gradient(90deg,
+      rgba(255,175,150,0.16) 0px, rgba(255,175,150,0.16) 2px,
+      transparent 2px, transparent 27px),
+
+    /* 4 · pliegues secundarios, periodo distinto para romper el patrón */
+    repeating-linear-gradient(90deg,
+      rgba(0,0,0,0.30) 0px, transparent 5px,
+      transparent 48px, rgba(0,0,0,0.30) 53px),
+
+    /* 5 · pliegues principales del terciopelo */
+    repeating-linear-gradient(90deg,
+      #34090a 0px,
+      #6d1815 14px,
+      #9e2723 27px,
+      #bd3a31 36px,
+      #9e2723 45px,
+      #6d1815 60px,
+      #34090a 76px);
+
+  box-shadow: inset 0 0 160px rgba(0,0,0,0.55);
 }
+
+/* Fleco dorado en el borde interior de cada hoja */
+.hoja::before {
+  content: "";
+  position: absolute;
+  top: 0; bottom: 0;
+  width: 14px;
+  background: linear-gradient(90deg, transparent, #b8862c 55%, #f0d68c);
+  opacity: 0.85;
+}
+.hoja.izq::before { right: 0; }
+.hoja.der::before { left: 0; transform: scaleX(-1); }
+
 .hoja.izq { left: 0; transform-origin: left center; }
 .hoja.der { right: 0; transform-origin: right center; }
+
+/* Al abrir, la tela se recoge: se comprime y los pliegues se juntan */
 #telon.abierto .hoja.izq { transform: translateX(-92%) scaleX(0.5) skewY(1.2deg); }
 #telon.abierto .hoja.der { transform: translateX(92%) scaleX(0.5) skewY(-1.2deg); }
 
+/* Cenefa dorada con festón */
 #cenefa {
-  position: absolute; top: 0; left: 0; right: 0; height: 68px; z-index: 2;
-  background: linear-gradient(180deg, #f0d68c, #a8781f);
-  -webkit-mask-image: radial-gradient(circle 32px at 32px 68px, transparent 32px, #000 32px);
-  mask-image: radial-gradient(circle 32px at 32px 68px, transparent 32px, #000 32px);
-  -webkit-mask-size: 64px 68px; mask-size: 64px 68px; mask-repeat: repeat-x;
+  position: absolute; top: 0; left: 0; right: 0; height: 74px; z-index: 2;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.35) 0%, transparent 30%),
+    repeating-linear-gradient(90deg,
+      #a8781f 0px, #d9ab4e 22px, #f0d68c 34px, #d9ab4e 46px, #a8781f 68px);
+  -webkit-mask-image: radial-gradient(circle 34px at 34px 74px, transparent 34px, #000 34px);
+  mask-image: radial-gradient(circle 34px at 34px 74px, transparent 34px, #000 34px);
+  -webkit-mask-size: 68px 74px; mask-size: 68px 74px; mask-repeat: repeat-x;
+  filter: drop-shadow(0 6px 10px rgba(0,0,0,0.55));
   transition: transform 2s ease-in-out;
 }
 #telon.abierto #cenefa { transform: translateY(-34px); }
