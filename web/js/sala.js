@@ -74,34 +74,17 @@ function marcar(tipo) {
   }
 }
 
-// ---- Voz de Caine con respaldo de texto ----
-// Si el mp3 no existe la promesa vuelve al instante, así que
-// se calcula una pausa de lectura según la longitud del texto.
-// Sin eso, las frases encadenadas pasan volando.
-
-function mostrarSubtitulo(texto) {
-  if (!subtitulo || !texto) return;
-  subtitulo.textContent = texto;
-  subtitulo.classList.add("visible");
-}
-
-function tiempoDeLectura(texto) {
-  return Math.min(Math.max(texto.length * 45, 2000), 7000);
-}
+// ---- Voz de Caine ----
+// audio-caine.js ya escribe el subtítulo leyendo de TEXTOS y espera
+// un tiempo proporcional al texto cuando el mp3 aún no existe.
+// Aquí solo se le pide que NO lo oculte al terminar, para que la
+// frase se pueda leer hasta que Caine diga la siguiente.
 
 async function caineDice(clave) {
-  const texto = TEXTOS[clave];
-  mostrarSubtitulo(texto);
-  const t0 = performance.now();
   try {
-    await reproducirVoz(clave);
+    await reproducirVoz(clave, { ocultarAlFinal: false });
   } catch {
     console.warn(`Audio no disponible: ${clave}`);
-  }
-  const transcurrido = performance.now() - t0;
-  // Menos de 250 ms = el audio no sonó: deja tiempo para leer
-  if (texto && transcurrido < 250) {
-    await esperar(tiempoDeLectura(texto) - transcurrido);
   }
 }
 
