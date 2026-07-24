@@ -12,6 +12,14 @@
   <div id="capa-glitch" aria-hidden="true"></div>
 
   <div id="escena-sala">
+    <div class="habitacion" aria-hidden="true">
+      <div class="hab-techo"></div>
+      <div class="hab-pared izq"></div>
+      <div class="hab-pared der"></div>
+      <div class="hab-fondo"></div>
+      <div class="hab-piso"></div>
+      <div class="hab-luz"></div>
+    </div>
     <model-viewer id="visor3d"
       camera-controls
       ar
@@ -41,6 +49,10 @@
       </div>
     </div>
     <div id="zona-inferior">
+      <div id="pregunta-fija" aria-live="polite">
+        <span class="etiqueta">El reto</span>
+        <p class="texto"></p>
+      </div>
       <p id="subtitulo-caine" aria-live="polite"></p>
       <p id="indicacion"></p>
       <div class="fila-botones">
