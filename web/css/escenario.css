@@ -1184,3 +1184,44 @@ body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
 @media (max-width: 720px) {
   body[data-sala="3"] .titulo-imagen { width: min(56vw, 230px); }
 }
+
+
+/* ============================================================
+   El panel del reto adopta el aspecto de la caja de Caine
+   (misma tipografía, borde y fondo), pero permanece visible
+   durante toda la sala en lugar de borrarse con cada frase.
+   ============================================================ */
+
+#pregunta-fija {
+  width: auto;
+  max-width: min(60ch, 78vw);
+  background: rgba(5, 3, 11, 0.82);
+  backdrop-filter: blur(12px);
+  border: 2px solid rgba(240, 214, 140, 0.55);
+  border-radius: 16px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.55);
+}
+#pregunta-fija.visible {
+  max-height: 12rem;
+  padding: 0.85rem 1.5rem;
+}
+
+/* Sin etiqueta "EL RETO": la caja se explica sola */
+#pregunta-fija .etiqueta { display: none; }
+
+#pregunta-fija .texto {
+  font-style: italic;
+  font-size: clamp(0.95rem, 2.1vw, 1.12rem);
+  line-height: 1.5;
+  color: #f7efdc;
+}
+
+@media (max-width: 720px) {
+  #pregunta-fija.visible { padding: 0.6rem 1rem; }
+  #pregunta-fija .texto { font-size: 0.86rem; line-height: 1.4; }
+}
+
+/* El panel del reto queda desactivado: la pregunta va en la caja
+   de Caine, que es la que se decidió mantener. El div sigue en el
+   HTML por si se quiere reactivar quitando esta regla. */
+#pregunta-fija { display: none !important; }

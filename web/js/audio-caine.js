@@ -94,10 +94,13 @@ function simularHabla(duracionMs) {
  * Devuelve una Promise que resuelve al terminar el audio
  * (o tras una pausa estimada si el mp3 aún no existe).
  * @param {string} id
- * @param {Object} opciones  { ocultarAlFinal }
+ * @param {Object} opciones
+ *   ocultarAlFinal — ocultar el subtítulo al terminar (por defecto sí)
+ *   sinSubtitulo   — no tocar el subtítulo: el texto ya se muestra
+ *                    en otro sitio, como el panel del reto
  */
-export function caineDice(id, { ocultarAlFinal = true } = {}) {
-  const sub = document.getElementById("subtitulo-caine");
+export function caineDice(id, { ocultarAlFinal = true, sinSubtitulo = false } = {}) {
+  const sub = sinSubtitulo ? null : document.getElementById("subtitulo-caine");
   const texto = textoDe(id);
   if (sub) {
     sub.textContent = texto;
