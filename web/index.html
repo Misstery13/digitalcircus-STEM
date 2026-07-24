@@ -10,6 +10,7 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="escenario">
+  <div id="capa-glitch" aria-hidden="true"></div>
 
   <!-- 1. EL MUNDO: el circo real en 3D. La cámara vuela de fuera hacia dentro. -->
   <div id="mundo">
@@ -104,7 +105,7 @@
   </div>
 
   <script type="module">
-    import { pintarHUD, llaves } from "./js/estado.js";
+    import { pintarHUD, llaves, todasLasLlaves, resetTodo } from "./js/estado.js";
     import { caineDice, alHablar } from "./js/audio-caine.js";
     import { VUELO } from "./js/vuelo.js";
     import { volarSecuencia, fijarEncuadre, ocultarMateriales }
@@ -182,8 +183,13 @@
 
     pintarHUD();
     const marcarPuertas = () => {
-      const g = llaves();
-      if (g.length >= 5) document.getElementById("puerta-portal").classList.add("lista");
+      const ganadas = llaves();
+      document.querySelectorAll(".puerta[data-sala]").forEach((a) => {
+        a.classList.toggle("resuelta", ganadas.includes(Number(a.dataset.sala)));
+      });
+      if (todasLasLlaves()) {
+        document.getElementById("puerta-portal").classList.add("lista");
+      }
     };
     marcarPuertas();
 
@@ -227,6 +233,13 @@
     } else {
       btn.addEventListener("click", () => entrar(true), { once: true });
     }
+
+    // Reinicio oculto para la demo: pulsar R tres veces seguidas.
+    let toquesR = 0;
+    addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() !== "r") { toquesR = 0; return; }
+      if (++toquesR >= 3) { resetTodo(); location.reload(); }
+    });
   </script>
 </body>
 </html>
