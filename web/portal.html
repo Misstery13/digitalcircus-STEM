@@ -9,12 +9,20 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="sala">
+  <div id="capa-glitch" aria-hidden="true"></div>
 
   <div id="escena-sala">
+    <div class="habitacion" aria-hidden="true">
+      <div class="hab-techo"></div>
+      <div class="hab-pared izq"></div>
+      <div class="hab-pared der"></div>
+      <div class="hab-fondo"></div>
+      <div class="hab-piso"></div>
+      <div class="hab-luz"></div>
+    </div>
     <model-viewer id="visor3d"
       src="modelos/portal.glb"
       camera-controls
-      autoplay="false"
       ar
       shadow-intensity="1"
       exposure="1.1"
@@ -56,6 +64,10 @@
 
   <video id="camara" autoplay muted playsinline></video>
 
+  <script>
+    document.body.dataset.sala = "portal";
+  </script>
+
   <script type="module">
     import { llaves, pintarHUD } from "./js/estado.js";
     import { caineDice } from "./js/audio-caine.js";
@@ -81,7 +93,7 @@
         visor.play({ repetitions: 1 });
       } catch {}
       indicacion.textContent = "✨ El portal se abre...";
-      await caineDice("99_final");
+      await caineDice("99_final", { ocultarAlFinal: false });
       // El giro: cruzas... y despiertas en el circo de siempre.
       document.body.style.transition = "opacity 1.2s";
       document.body.style.opacity = "0";
@@ -94,6 +106,7 @@
       try {
         await iniciarGestos(document.getElementById("camara"), { manoAbierta: activarPortal });
       } catch {
+        document.body.classList.add("sin-camara");
         document.getElementById("modo-botones").hidden = false;
       }
     });

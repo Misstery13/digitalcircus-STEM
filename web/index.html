@@ -234,10 +234,14 @@
       btn.addEventListener("click", () => entrar(true), { once: true });
     }
 
-    // Reinicio oculto para la demo: pulsar R tres veces seguidas.
-    let toquesR = 0;
+    // Reinicio oculto para la demo: R tres veces en menos de 1,5 s.
+    // La ventana de tiempo evita que tres pulsaciones sueltas y
+    // separadas en el tiempo borren el progreso sin querer.
+    let toquesR = 0, relojR = null;
     addEventListener("keydown", (e) => {
       if (e.key.toLowerCase() !== "r") { toquesR = 0; return; }
+      clearTimeout(relojR);
+      relojR = setTimeout(() => (toquesR = 0), 1500);
       if (++toquesR >= 3) { resetTodo(); location.reload(); }
     });
   </script>

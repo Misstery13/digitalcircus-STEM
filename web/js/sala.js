@@ -11,7 +11,7 @@
 //   · 3 fallos → Caine regala la respuesta ("acto de caridad")
 // ============================================================
 
-import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta } from "./config-salas.js";
+import { SALAS, ANIMACIONES, validarRespuesta } from "./config-salas.js";
 import * as estado from "./estado.js";
 import { caineDice as reproducirVoz } from "./audio-caine.js";
 import { iniciarGestos, escucharRespuesta } from "./gestos.js";
@@ -26,7 +26,6 @@ const btnResponder = document.getElementById("btn-responder");
 const indicacion = document.getElementById("indicacion");
 const subtitulo = document.getElementById("subtitulo-caine");
 const escena = document.getElementById("escena-sala");
-const panelPregunta = document.getElementById("pregunta-fija");
 
 const esperar = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
 
@@ -46,20 +45,6 @@ document.title = `Sala ${id} — ${sala.personaje} | Digital Circus STEM Escape`
 if (sala.modelo) visor.src = sala.modelo;
 estado.pintarHUD();
 
-// ---- Panel fijo del reto ----
-// La pregunta se queda en pantalla toda la sala; las frases de
-// Caine (pistas, fallos, aciertos) van aparte en el subtítulo.
-
-function fijarPregunta(texto) {
-  if (!panelPregunta || !texto) return;
-  panelPregunta.querySelector(".texto").textContent = texto;
-  panelPregunta.classList.add("visible");
-}
-
-function ocultarPregunta() {
-  panelPregunta?.classList.remove("visible");
-}
-
 // ---- Realimentación visual (acierto / fallo) ----
 
 function marcar(tipo) {
@@ -74,34 +59,19 @@ function marcar(tipo) {
   }
 }
 
-// ---- Voz de Caine con respaldo de texto ----
-// Si el mp3 no existe la promesa vuelve al instante, así que
-// se calcula una pausa de lectura según la longitud del texto.
-// Sin eso, las frases encadenadas pasan volando.
+// ---- Voz de Caine ----
+// audio-caine.js ya escribe el subtítulo leyendo de TEXTOS y espera
+// un tiempo proporcional al texto cuando el mp3 aún no existe.
+// Aquí solo se le pide que NO lo oculte al terminar, para que la
+// frase se pueda leer hasta que Caine diga la siguiente.
 
-function mostrarSubtitulo(texto) {
-  if (!subtitulo || !texto) return;
-  subtitulo.textContent = texto;
-  subtitulo.classList.add("visible");
-}
-
-function tiempoDeLectura(texto) {
-  return Math.min(Math.max(texto.length * 45, 2000), 7000);
-}
-
-async function caineDice(clave) {
-  const texto = TEXTOS[clave];
-  mostrarSubtitulo(texto);
-  const t0 = performance.now();
+async function caineDice(clave, opciones = {}) {
   try {
-    await reproducirVoz(clave);
-  } catch {
-    console.warn(`Audio no disponible: ${clave}`);
-  }
-  const transcurrido = performance.now() - t0;
-  // Menos de 250 ms = el audio no sonó: deja tiempo para leer
-  if (texto && transcurrido < 250) {
-    await esperar(tiempoDeLectura(texto) - transcurrido);
+    await reproducirVoz(clave, { ocultarAlFinal: false, ...opciones });
+  } catch (e) {
+    // audio-caine.js no rechaza si falta el mp3 (resuelve tras una pausa),
+    // así que llegar aquí es un fallo real: conviene ver el error tal cual.
+    console.error(`Fallo al reproducir "${clave}":`, e);
   }
 }
 
@@ -135,7 +105,6 @@ async function abrirPuerta() {
 async function hacerPregunta() {
   fase = "PREGUNTA";
   marcar(null);
-  fijarPregunta(TEXTOS[sala.audios.pregunta]);
   await caineDice(sala.audios.pregunta);
   fase = "ESCUCHANDO";
   indicar("🎤 Di tu respuesta en voz alta (o toca «Responder»)");
@@ -194,7 +163,6 @@ async function sonrisaDetectada() {
   if (fase === "SONRISA") {
     fase = "FIN";
     marcar("acierto");
-    ocultarPregunta();
     animar(ANIMACIONES.recompensa);
     await caineDice("gen_sonrisa_recompensa");
     estado.darLlave(id);
