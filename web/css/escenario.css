@@ -1306,3 +1306,7 @@ body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
 @media (max-width: 720px) {
   body[data-sala="3"] .titulo-imagen { width: min(56vw, 230px); }
 }
+
+/* En el pasillo (index.html), ocultar llaves y abstracción.
+   Solo deben verse dentro de las salas. */
+body.escenario #hud-flotante { visibility: hidden; }
