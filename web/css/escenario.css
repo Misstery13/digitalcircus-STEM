@@ -1310,3 +1310,56 @@ body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
 /* En el pasillo (index.html), ocultar llaves y abstracción.
    Solo deben verse dentro de las salas. */
 body.escenario #hud-flotante { visibility: hidden; }
+
+/* ============================================================
+   HUD de sala: LLAVES arriba-izquierda, ABSTRACCIÓN arriba-derecha.
+   ============================================================ */
+body.sala #rotulo-sala {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: auto;
+  transform: translateX(-50%);
+}
+
+body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+  position: fixed;
+  top: 28px;
+  left: 16px;
+  width: max-content;
+  z-index: 35;
+  margin: 0;
+}
+
+body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+  position: fixed;
+  top: 28px;
+  right: 16px;
+  z-index: 35;
+  margin: 0;
+}
+
+body.sala #control-musica {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  top: auto;
+  right: auto;
+  z-index: 35;
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 999px;
+  padding: 0.4rem 0.8rem;
+}
+
+body.sala #rotulo-sala.con-imagen { top: 20px; }
+
+/* Durante la pregunta, la caja de Caine no debe mostrar la pregunta duplicada */
+body.sala.fase-pregunta #subtitulo-caine { display: none !important; }
+
+/* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
+body.en-pregunta #subtitulo-caine { display: none !important; }
+
+/* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
+body.en-pregunta #subtitulo-caine { display: none !important; }

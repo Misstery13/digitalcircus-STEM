@@ -136,8 +136,9 @@ async function abrirPuerta() {
 async function hacerPregunta() {
   fase = "PREGUNTA";
   marcar(null);
+  document.body.classList.add("en-pregunta");
   fijarPregunta(TEXTOS[sala.audios.pregunta]);
-  await caineDice(sala.audios.pregunta);
+  reproducirVoz(sala.audios.pregunta);
   fase = "ESCUCHANDO";
   indicar("🎤 Di tu respuesta en voz alta (o toca «Responder»)");
 }
@@ -145,6 +146,7 @@ async function hacerPregunta() {
 async function procesarRespuesta(dicho) {
   if (fase !== "ESCUCHANDO" || !dicho) return;
   fase = "PROCESANDO"; // bloquea respuestas mientras Caine habla
+  document.body.classList.remove("en-pregunta");
 
   if (validarRespuesta(dicho, sala)) {
     marcar("acierto");
