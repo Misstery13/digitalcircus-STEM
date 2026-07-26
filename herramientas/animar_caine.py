@@ -52,6 +52,10 @@ except ImportError:
     props_stem = None
 
 
+EJE_BOCA = "X"
+GRADOS_BOCA = 20.0
+
+
 def log(m):
     print(f"[animar] {m}")
 
@@ -60,7 +64,10 @@ def log(m):
 # Se prueban en orden: la primera que encaje, gana.
 PISTAS = {
     "cabeza":  ["head", "cabeza", "skull", "cranium"],
-    "boca":    ["jaw", "boca", "mouth", "mandible", "teeth", "diente", "chin"],
+    "boca":    ["mouthbotcontrol", "jawlower", "jaw", "boca", "mandible",
+                "mouthbot", "chin", "teeth", "diente"],
+    "bocaSup": ["mouthtopcontrol", "jawupper", "mouthtop", "upperjaw"],
+    "sombrero": ["hat", "sombrero", "cap"],
     "brazoI":  ["arm.l", "arm_l", "leftarm", "arm.left", "brazo.l", "upperarm.l",
                 "shoulder.l", "hombro.l", "l_arm", "arml"],
     "brazoD":  ["arm.r", "arm_r", "rightarm", "arm.right", "brazo.r", "upperarm.r",
@@ -74,7 +81,8 @@ PISTAS = {
 
 
 def leer_args():
-    cfg = {"entrada": "", "salida": "", "mapa": "", "listar": False}
+    cfg = {"entrada": "", "salida": "", "mapa": "", "listar": False,
+           "eje_boca": "X", "grados_boca": "20"}
     if "--" in sys.argv:
         argv = sys.argv[sys.argv.index("--") + 1:]
         i = 0
@@ -292,22 +300,46 @@ def guion_idle(h):
                 (60, {"rot": (2, 0, 0)}),
                 (120, {"rot": (0, 0, 0)}),
             ]))
+    if "sombrero" in h:
+        g.append((h["sombrero"], [
+            (1,  {"rot": (0, 0, 0)}),
+            (50, {"rot": (2, 0, 1.5)}),
+            (120, {"rot": (0, 0, 0)}),
+        ]))
     return g
 
 
 def guion_hablar(h):
     """Habla: boca abriendo y cerrando, brazos gesticulando, cabezazos."""
     g = []
-    if "boca" in h:
-        # ritmo de sílabas: abre y cierra cada ~8 frames
+    eje = {"X": 0, "Y": 1, "Z": 2}.get(EJE_BOCA.upper(), 0)
+    tope = GRADOS_BOCA
+
+    def claves_boca(signo):
+        """Abre y cierra al ritmo de sílabas, sobre el eje elegido."""
         claves = []
-        f = 1
-        abierto = False
+        f, abierto = 1, False
         while f <= 96:
-            claves.append((f, {"rot": (18 if abierto else 0, 0, 0)}))
+            rot = [0.0, 0.0, 0.0]
+            if abierto:
+                rot[eje] = tope * signo
+            claves.append((f, {"rot": tuple(rot)}))
             abierto = not abierto
             f += 8
-        g.append((h["boca"], claves))
+        return claves
+
+    # Mandíbula inferior baja y superior sube: la boca se abre de verdad
+    if "boca" in h:
+        g.append((h["boca"], claves_boca(1)))
+    if "bocaSup" in h:
+        g.append((h["bocaSup"], claves_boca(-0.55)))
+    if "sombrero" in h:
+        g.append((h["sombrero"], [
+            (1,  {"rot": (0, 0, 0)}),
+            (24, {"rot": (4, 0, 3)}),
+            (48, {"rot": (-3, 0, -2)}),
+            (96, {"rot": (0, 0, 0)}),
+        ]))
     if "cabeza" in h:
         g.append((h["cabeza"], [
             (1,  {"rot": (0, 0, 0)}),
@@ -337,7 +369,10 @@ def guion_hablar(h):
 
 
 def main():
+    global EJE_BOCA, GRADOS_BOCA
     cfg = leer_args()
+    EJE_BOCA = str(cfg.get("eje_boca", "X"))
+    GRADOS_BOCA = float(cfg.get("grados_boca", 20))
     if not cfg["entrada"]:
         sys.exit("ERROR: falta --entrada")
 
@@ -359,7 +394,7 @@ def main():
         sys.exit("No reconocí ningún hueso. Usa --listar y pásalos con --mapa.")
 
     print()
-    log("Creando animaciones...")
+    log(f"Creando animaciones... (boca: eje {EJE_BOCA}, {GRADOS_BOCA:.0f}°)")
     crear_accion(arm, "caine_idle", guion_idle(huesos), 120)
     crear_accion(arm, "caine_hablar", guion_hablar(huesos), 96)
 

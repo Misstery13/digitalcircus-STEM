@@ -10,11 +10,12 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
 </head>
 <body class="escenario">
+  <div id="capa-glitch" aria-hidden="true"></div>
 
   <!-- 1. EL MUNDO: el circo real en 3D. La cámara vuela de fuera hacia dentro. -->
   <div id="mundo">
     <model-viewer id="circo"
-      src="modelos/digital_circus_scene.glb"
+      src="../assets/modelos/digital_circus_scene.glb"
       camera-controls
       disable-zoom
       disable-pan
@@ -39,7 +40,7 @@
   <div id="caine-escena">
     <div id="caine-flota">
       <model-viewer id="caine"
-        src="modelos/caine_tadc.glb"
+        src="../assets/modelos/caine_animado2.glb"
         camera-controls
         disable-zoom
         disable-pan
@@ -56,6 +57,12 @@
     <div class="hoja izq"></div>
     <div class="hoja der"></div>
     <div id="cenefa" aria-hidden="true"></div>
+    <div id="luces-telon" aria-hidden="true">
+      <span class="rayo"></span>
+      <span class="rayo b"></span>
+      <span class="rayo c"></span>
+      <span class="rayo d"></span>
+    </div>
   </div>
 
   <!-- 4. Título de arranque, sobre el circo visto desde fuera -->
@@ -104,12 +111,13 @@
   </div>
 
   <script type="module">
-    import { pintarHUD, llaves } from "./js/estado.js";
+    import { pintarHUD, llaves, todasLasLlaves, resetTodo } from "./js/estado.js";
     import { caineDice, alHablar } from "./js/audio-caine.js";
     import { VUELO } from "./js/vuelo.js";
     import { volarSecuencia, fijarEncuadre, ocultarMateriales }
       from "./js/camara.js";
     import { CAINE, encuadrarCaine, animarCaine } from "./js/caine.js";
+    import { iniciarMusica, detenerMusica } from "./js/musica.js";
 
     // ══ AJUSTES DE CÁMARA ═══════════════════════════════════════════
     // Si el vuelo se queda corto o se pasa, toca SOLO estos números.
@@ -146,7 +154,7 @@
     let hablarCaine = () => {};
 
     visorC.addEventListener("error", () =>
-      console.error("[caine] no se pudo cargar modelos/caine_tadc.glb"));
+      console.error("[caine] no se pudo cargar assets/modelos/caine_animado2.glb"));
 
     visorC.addEventListener("load", () => {
       const anims = visorC.availableAnimations || [];
@@ -171,7 +179,7 @@
     let volando = false;
 
     circo.addEventListener("error", (e) =>
-      console.error("[circo] NO se pudo cargar modelos/digital_circus_scene.glb", e));
+      console.error("[circo] NO se pudo cargar assets/modelos/digital_circus_scene.glb", e));
 
     circo.addEventListener("load", () => {
       console.log("[circo] modelo cargado");
@@ -182,14 +190,20 @@
 
     pintarHUD();
     const marcarPuertas = () => {
-      const g = llaves();
-      if (g.length >= 5) document.getElementById("puerta-portal").classList.add("lista");
+      const ganadas = llaves();
+      document.querySelectorAll(".puerta[data-sala]").forEach((a) => {
+        a.classList.toggle("resuelta", ganadas.includes(Number(a.dataset.sala)));
+      });
+      if (todasLasLlaves()) {
+        document.getElementById("puerta-portal").classList.add("lista");
+      }
     };
     marcarPuertas();
 
     /** Secuencia completa de entrada. */
     async function entrar(conIntro) {
       console.log("[entrada] click recibido");
+      iniciarMusica();
       volando = true;
       btn.disabled = true;
       titulo.classList.add("fuera");           // el título se desvanece
@@ -210,7 +224,8 @@
       telon.classList.add("abierto");
       await esperar(1800);
 
-      // 4 · Caine entra en escena
+      // 4 · Caine entra en escena; el 3D da paso al fondo fijo
+      mundo.classList.add("fondo-fijo");
       escenaC.classList.add("presente");
       await esperar(900);
 
@@ -227,6 +242,13 @@
     } else {
       btn.addEventListener("click", () => entrar(true), { once: true });
     }
+
+    // Reinicio oculto para la demo: pulsar R tres veces seguidas.
+    let toquesR = 0;
+    addEventListener("keydown", (e) => {
+      if (e.key.toLowerCase() !== "r") { toquesR = 0; return; }
+      if (++toquesR >= 3) { detenerMusica(); resetTodo(); location.reload(); }
+    });
   </script>
 </body>
 </html>
