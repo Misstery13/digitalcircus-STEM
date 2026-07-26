@@ -163,13 +163,16 @@ async function procesarRespuesta(dicho) {
   estado.pintarHUD();
 
   if (abstraido) {
-    // Game over suave: reset de la sala (sección 2.2)
+    // Abstraccion total: se muestra el modelo abstracted y se vuelve al circo
     sonarOurNewHome();
-    await caineDice("gen_abstraccion_reset");
+    ocultarPregunta();
+    escena?.classList.add("abierta");
+    if (visor) visor.src = "../assets/modelos/abstracted.glb";
+    await caineDice("gen_abstraccion_perdido");
+    await esperar(2500);
     estado.resetAbstraccion();
     estado.pintarHUD();
-    fallos = 0;
-    await hacerPregunta();
+    location.href = "index.html?directo=1";
     return;
   }
 
