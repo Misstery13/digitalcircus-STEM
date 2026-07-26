@@ -1339,58 +1339,10 @@ body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
   margin: 0;
 }
 
-body.sala #control-musica {
-  position: fixed;
-  bottom: 18px;
-  left: 18px;
-  top: auto;
-  right: auto;
-  z-index: 35;
-  background: rgba(5, 3, 11, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(240, 214, 140, 0.35);
-  border-radius: 999px;
-  padding: 0.4rem 0.8rem;
-}
-
 body.sala #rotulo-sala.con-imagen { top: 20px; }
 
-/* Durante la pregunta, la caja de Caine no debe mostrar la pregunta duplicada */
-body.sala.fase-pregunta #subtitulo-caine { display: none !important; }
-
 /* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
 body.en-pregunta #subtitulo-caine { display: none !important; }
-
-/* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
-body.en-pregunta #subtitulo-caine { display: none !important; }
-
-/* Boton para volver al pasillo de salas (index.html) */
-body.sala #btn-volver {
-  position: fixed;
-  bottom: 18px;
-  left: 180px;
-  z-index: 35;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-  padding: 0.4rem 0.9rem;
-  font-family: 'Rye', serif;
-  font-size: 0.72rem;
-  letter-spacing: 0.05em;
-  text-decoration: none;
-  color: rgba(247, 239, 220, 0.85);
-  background: rgba(5, 3, 11, 0.6);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(240, 214, 140, 0.35);
-  border-radius: 999px;
-  transition: border-color 0.2s, color 0.2s, transform 0.2s;
-}
-body.sala #btn-volver:hover {
-  border-color: #f0d68c;
-  color: #f0d68c;
-  transform: translateY(-1px);
-}
-
 /* ---- Botones circulares gemelos: volver y volumen ---- */
 body.sala #btn-volver,
 body.sala #control-musica {
