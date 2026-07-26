@@ -163,7 +163,7 @@ async function procesarRespuesta(dicho) {
   estado.pintarHUD();
 
   if (abstraido) {
-    // Abstraccion total: se muestra el modelo abstracted y se vuelve al circo
+    // Abstracción total: se muestra el modelo abstracted y se vuelve al circo
     sonarOurNewHome();
     ocultarPregunta();
     escena?.classList.add("abierta");
