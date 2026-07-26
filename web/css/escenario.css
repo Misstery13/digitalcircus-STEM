@@ -1363,3 +1363,88 @@ body.en-pregunta #subtitulo-caine { display: none !important; }
 
 /* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
 body.en-pregunta #subtitulo-caine { display: none !important; }
+
+/* Boton para volver al pasillo de salas (index.html) */
+body.sala #btn-volver {
+  position: fixed;
+  bottom: 18px;
+  left: 180px;
+  z-index: 35;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.4rem 0.9rem;
+  font-family: 'Rye', serif;
+  font-size: 0.72rem;
+  letter-spacing: 0.05em;
+  text-decoration: none;
+  color: rgba(247, 239, 220, 0.85);
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 999px;
+  transition: border-color 0.2s, color 0.2s, transform 0.2s;
+}
+body.sala #btn-volver:hover {
+  border-color: #f0d68c;
+  color: #f0d68c;
+  transform: translateY(-1px);
+}
+
+/* ---- Botones circulares gemelos: volver y volumen ---- */
+body.sala #btn-volver,
+body.sala #control-musica {
+  position: fixed;
+  bottom: 18px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 50%;
+  z-index: 35;
+  transition: border-color 0.2s, transform 0.2s;
+}
+body.sala #btn-volver {
+  left: 18px;
+  font-family: 'Rye', serif;
+  font-size: 1.1rem;
+  color: rgba(247, 239, 220, 0.85);
+  text-decoration: none;
+}
+body.sala #control-musica {
+  left: 76px;
+  overflow: visible;
+}
+body.sala #btn-volver:hover,
+body.sala #control-musica:hover {
+  border-color: #f0d68c;
+  transform: scale(1.08);
+}
+body.sala #control-musica #btn-musica {
+  font-size: 1.2rem;
+}
+/* El slider se oculta y aparece vertical al pasar el mouse */
+body.sala #control-musica #rango-musica {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center;
+  accent-color: #f0d68c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  background: rgba(5, 3, 11, 0.85);
+  padding: 8px;
+  border-radius: 999px;
+}
+body.sala #control-musica:hover #rango-musica {
+  opacity: 1;
+  pointer-events: auto;
+}

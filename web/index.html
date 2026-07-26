@@ -186,6 +186,9 @@
       if (volando) return;          // no pisar el vuelo si el load llega tarde
       fijarEncuadre(circo, VUELO.fuera);
       ocultarMateriales(circo, VUELO.ocultar);
+      if (new URLSearchParams(location.search).get("directo") === "1") {
+        entrar(false);
+      }
     });
 
     pintarHUD();
