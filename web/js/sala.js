@@ -7,11 +7,11 @@
 // Reglas implementadas del documento de diseño:
 //   · fallo o pista → +1 abstracción (glitch CSS progresivo)
 //   · sonrisa fuera de recompensa → −1 abstracción
-//   · abstracción = 4 → reset suave de la sala
-//   · 3 fallos → Caine regala la respuesta ("acto de caridad")
+//   · abstracción = 3 (global, todo el recorrido) → reset total del juego
+//   · 3 fallos en la misma sala → Caine regala la respuesta ("acto de caridad")
 // ============================================================
 
-import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta } from "./config-salas.js";
+import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta, normalizar } from "./config-salas.js";
 import * as estado from "./estado.js";
 import { caineDice as reproducirVoz } from "./audio-caine.js";
 import { iniciarGestos, escucharRespuesta } from "./gestos.js";
@@ -114,6 +114,12 @@ function indicar(texto) {
   indicacion.textContent = texto;
 }
 
+// Pista de la defensa (sección 2.2): sonreír antes de responder baja
+// la abstracción. Solo tiene sentido mostrarla si hay algo que bajar.
+function conPistaSonrisa(texto) {
+  return estado.abstraccion() > 0 ? `${texto} · 😊 Sonríe para calmar la abstracción` : texto;
+}
+
 function animar(nombre) {
   // model-viewer reproduce la animación por nombre (contrato con Blender)
   try {
@@ -140,11 +146,16 @@ async function hacerPregunta() {
   fijarPregunta(TEXTOS[sala.audios.pregunta]);
   reproducirVoz(sala.audios.pregunta);
   fase = "ESCUCHANDO";
-  indicar("🎤 Di tu respuesta en voz alta (o toca «Responder»)");
+  indicar(conPistaSonrisa("🎤 Di tu respuesta en voz alta (o toca «Responder»)"));
 }
 
 async function procesarRespuesta(dicho) {
   if (fase !== "ESCUCHANDO" || !dicho) return;
+  if (!normalizar(dicho)) {
+    // Transcripción sin contenido útil (p. ej. solo ".") — no cuenta como fallo
+    indicar("No te escuché bien. Inténtalo de nuevo.");
+    return;
+  }
   fase = "PROCESANDO"; // bloquea respuestas mientras Caine habla
   document.body.classList.remove("en-pregunta");
 
@@ -162,8 +173,18 @@ async function procesarRespuesta(dicho) {
   const abstraido = estado.subirAbstraccion();
   estado.pintarHUD();
 
+  if (fallos >= 3) {
+    // Acto de caridad primero: si coincide con el máximo de abstracción,
+    // Caine igual regala la respuesta antes de resetear (sección 2.3)
+    await caineDice(sala.audios.caridad);
+    fase = "ESCUCHANDO";
+    indicar(conPistaSonrisa("🎤 Repite la respuesta en voz alta"));
+    return;
+  }
+
   if (abstraido) {
-    // Abstracción total: se muestra el modelo abstracted y se vuelve al circo
+    // Abstracción total (por fallos acumulados de salas previas):
+    // se muestra el modelo abstracted y se vuelve al circo
     sonarOurNewHome();
     ocultarPregunta();
     escena?.classList.add("abierta");
@@ -176,18 +197,10 @@ async function procesarRespuesta(dicho) {
     return;
   }
 
-  if (fallos >= 3) {
-    // Acto de caridad: Caine regala la respuesta (sección 2.3)
-    await caineDice(sala.audios.caridad);
-    fase = "ESCUCHANDO";
-    indicar("🎤 Repite la respuesta en voz alta");
-    return;
-  }
-
   await caineDice(fallos === 1 ? "gen_fallo_1" : "gen_fallo_2");
   await caineDice(sala.audios.pistas[Math.min(fallos - 1, 1)]);
   fase = "ESCUCHANDO";
-  indicar("🎤 Inténtalo de nuevo");
+  indicar(conPistaSonrisa("🎤 Inténtalo de nuevo"));
 }
 
 async function confirmarConPulgar() {
@@ -243,8 +256,16 @@ async function iniciar() {
 
 // Botones de respaldo (desarrollo sin cámara / demo de emergencia)
 document.getElementById("btn-iniciar").addEventListener("click", iniciar);
+
+// `fase` no cambia mientras escucharRespuesta() está en vuelo, así que
+// clics repetidos antes de que resuelva creaban varias instancias de
+// SpeechRecognition al mismo tiempo — eso llegó a crashear el navegador.
+// Este flag bloquea la reentrada mientras dura la escucha.
+let escuchando = false;
 btnResponder.addEventListener("click", async () => {
-  if (fase !== "ESCUCHANDO") return;
+  if (fase !== "ESCUCHANDO" || escuchando) return;
+  escuchando = true;
+  btnResponder.disabled = true;
   indicar("🎤 Escuchando...");
   try {
     const dicho = await escucharRespuesta();
@@ -257,6 +278,9 @@ btnResponder.addEventListener("click", async () => {
   } catch (e) {
     console.warn("Voz no disponible:", e);
     indicar("La voz no está disponible. Escribe tu respuesta abajo.");
+  } finally {
+    escuchando = false;
+    btnResponder.disabled = false;
   }
 });
 document.getElementById("btn-mano")?.addEventListener("click", abrirPuerta);

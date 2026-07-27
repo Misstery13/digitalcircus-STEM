@@ -10,7 +10,7 @@ export const SALAS = {
     personaje: "Gangle",
     materia: "Matemáticas",
     emoji: "🎭",
-    modelo: "", // el .glb tiene la escala rota (247723 unidades) y tapa la habitación
+    modelo: "../assets/modelos/gangle.glb",
     tituloImg: "../assets/img/titulos/sala1_gangle.png",
     // Respuestas aceptadas (minúsculas, sin acentos). El validador normaliza.
     respuestas: ["ocho", "8"],
@@ -98,7 +98,7 @@ export const ANIMACIONES = {
 };
 
 export const TOTAL_LLAVES = 5;
-export const ABSTRACCION_MAX = 4;
+export const ABSTRACCION_MAX = 3;
 
 // ============================================================
 // TEXTOS — guion de Caine (documento de diseño §2 y §4).
@@ -166,10 +166,14 @@ export function normalizar(texto) {
     .trim();
 }
 
-/** true si la respuesta del usuario coincide con alguna aceptada. */
+/** true si la respuesta del usuario coincide con alguna aceptada.
+ *  También compara sin espacios: la voz suele deletrear siglas
+ *  cortas ("h2o" → "H. 2 o."), y así "h 2 o" sigue calzando con "h2o". */
 export function validarRespuesta(dicho, sala) {
   const limpio = normalizar(dicho);
-  return sala.respuestas.some(
-    (r) => limpio === normalizar(r) || limpio.includes(normalizar(r))
-  );
+  const sinEspacios = limpio.replace(/ /g, "");
+  return sala.respuestas.some((r) => {
+    const rn = normalizar(r);
+    return limpio === rn || limpio.includes(rn) || sinEspacios === rn.replace(/ /g, "");
+  });
 }

@@ -370,13 +370,14 @@ body.escenario {
 
 #hud-abstraccion {
   --nivel: 0;
+  --nivel-max: 3;
   width: 120px; height: 10px;
   border: 1px solid rgba(247,239,220,0.5);
   border-radius: 999px; overflow: hidden; position: relative; margin-top: 2px;
 }
 #hud-abstraccion::before {
   content: ""; position: absolute; inset: 0;
-  width: calc(var(--nivel) / 4 * 100%);
+  width: calc(var(--nivel) / var(--nivel-max) * 100%);
   background: repeating-linear-gradient(-45deg, #4de3c1 0 4px, transparent 4px 8px);
   transition: width 0.4s ease;
 }
@@ -1453,10 +1454,10 @@ html.modo-directo #titulo-telon { display: none !important; }
 html.modo-directo #caine-escena { opacity: 1 !important; }
 
 /* ============================================================
-   MÓVIL (max 720px) — layout limpio y unificado del HUD
+   Mï¿½VIL (max 720px) ï¿½ layout limpio y unificado del HUD
    ============================================================ */
 @media (max-width: 720px) {
-  /* --- Cámara: arriba a la derecha, para gestos --- */
+  /* --- Cï¿½mara: arriba a la derecha, para gestos --- */
   body.sala #camara {
     display: block !important;
     position: fixed !important;
@@ -1480,7 +1481,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
     margin: 0 !important;
     z-index: 35 !important;
   }
-  /* --- Abstracción: mismo nivel que llaves, a la derecha bajo la cámara --- */
+  /* --- Abstracciï¿½n: mismo nivel que llaves, a la derecha bajo la cï¿½mara --- */
   body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
     position: fixed !important;
     top: 120px !important;
@@ -1497,7 +1498,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   body.sala #zona-inferior { padding-bottom: 4rem !important; }
   body.sala #respuesta-texto { width: min(88vw, 320px) !important; }
 
-  /* --- Botón volver y volumen: abajo izquierda, separados --- */
+  /* --- Botï¿½n volver y volumen: abajo izquierda, separados --- */
   body.sala #btn-volver,
   body.escenario #btn-volver {
     position: fixed !important;
@@ -1533,7 +1534,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   }
 }
 /* ============================================================
-   MÓVIL v-fix: llaves por :first-of-type (el :has fallaba),
+   Mï¿½VIL v-fix: llaves por :first-of-type (el :has fallaba),
    y volumen del pasillo abajo izquierda.
    ============================================================ */
 @media (max-width: 720px) {
@@ -1557,7 +1558,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   }
 }
 /* ============================================================
-   MÓVIL final: llaves y abstracción DEBAJO del título (143px)
+   Mï¿½VIL final: llaves y abstracciï¿½n DEBAJO del tï¿½tulo (143px)
    ============================================================ */
 @media (max-width: 720px) {
   body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
@@ -1572,14 +1573,14 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
     transform: scale(0.62) !important;
     transform-origin: top right !important;
   }
-  /* La cámara baja también para no chocar */
+  /* La cï¿½mara baja tambiï¿½n para no chocar */
   body.sala #camara {
     top: 150px !important;
     right: 90px !important;
   }
 }
 /* ============================================================
-   MÓVIL: solo achicar y subir las llaves (no tocar camara)
+   Mï¿½VIL: solo achicar y subir las llaves (no tocar camara)
    ============================================================ */
 @media (max-width: 720px) {
   body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
@@ -1590,7 +1591,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   }
 }
 /* ============================================================
-   MÓVIL: camara esquina superior derecha, barras entre titulo
+   Mï¿½VIL: camara esquina superior derecha, barras entre titulo
    y puerta.
    ============================================================ */
 @media (max-width: 720px) {
@@ -1621,7 +1622,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   }
 }
 /* ============================================================
-   MÓVIL: subir camara, abstraccion igual a llaves
+   Mï¿½VIL: subir camara, abstraccion igual a llaves
    ============================================================ */
 @media (max-width: 720px) {
   /* Camara mas arriba en la esquina */
@@ -1629,7 +1630,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
     top: 44px !important;
     right: 8px !important;
   }
-  /* Abstraccion: mismo tamaño y nivel que llaves */
+  /* Abstraccion: mismo tamaï¿½o y nivel que llaves */
   body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
     top: 120px !important;
     right: 8px !important;
@@ -1639,7 +1640,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   #hud-abstraccion { width: 120px !important; }
 }
 /* ============================================================
-   MÓVIL: camara mas arriba, llaves y abstraccion identicas
+   Mï¿½VIL: camara mas arriba, llaves y abstraccion identicas
    ============================================================ */
 @media (max-width: 720px) {
   /* Camara pegada arriba a la derecha */
@@ -1647,7 +1648,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
     top: 30px !important;
     right: 8px !important;
   }
-  /* Llaves y abstraccion: exactamente el mismo tamaño y nivel */
+  /* Llaves y abstraccion: exactamente el mismo tamaï¿½o y nivel */
   body.sala #hud-flotante > .panel-hud:has(#hud-llaves),
   body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
     top: 122px !important;
@@ -1664,7 +1665,7 @@ html.modo-directo #caine-escena { opacity: 1 !important; }
   #hud-abstraccion { width: 110px !important; }
 }
 /* ============================================================
-   MÓVIL: subir salas y Caine en el pasillo, abstraccion mas grande
+   Mï¿½VIL: subir salas y Caine en el pasillo, abstraccion mas grande
    ============================================================ */
 @media (max-width: 720px) {
   /* Pasillo: subir las salas */
