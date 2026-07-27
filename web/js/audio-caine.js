@@ -20,6 +20,7 @@ export const SUBTITULOS = {
   gen_abstraccion_sube: "Uy... te estás viendo un poquito raro, querido.",
   gen_abstraccion_baja: "¡Una sonrisa al día mantiene la abstracción en la lejanía!",
   gen_abstraccion_reset: "¡Nada que un buen reseteo no arregle! Otra vez, desde el principio.",
+  gen_abstraccion_perdido: "¡Oh, no, no, NO! Te has abstraído por completo, querido. Tu mente se ha desvanecido en el vacío... ¡pero no temas! El circo siempre te recibe de nuevo. ¡Vuelve a empezar!",
   s1_pregunta: "Gangle tenía 24 máscaras. Jax rompió la mitad y luego 4 más. ¿Cuántas quedan?",
   s2_pregunta: "¿Cuál es la fórmula química del agua?",
   s3_pregunta: "¿Cómo se le llama a un error en el código de un programa?",

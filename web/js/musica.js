@@ -99,12 +99,11 @@ function construirControl() {
   };
   pintarBoton(leer(K_MUTE, "0") === "1");
 
-  btn.addEventListener("click", () => {
-    const silenciado = !(audio?.muted);
-    if (audio) audio.muted = silenciado;
-    sessionStorage.setItem(K_MUTE, silenciado ? "1" : "0");
-    pintarBoton(silenciado);
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    panel.classList.toggle("abierto");
   });
+  document.addEventListener("click", () => panel.classList.remove("abierto"));
 
   rango.addEventListener("input", () => {
     const v = parseFloat(rango.value);

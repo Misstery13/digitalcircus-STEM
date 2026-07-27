@@ -2,6 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
+  <script>
+    if (new URLSearchParams(location.search).get("directo") === "1") {
+      document.documentElement.classList.add("modo-directo");
+    }
+  </script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <title>Digital Circus STEM Escape</title>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -201,11 +206,23 @@
     marcarPuertas();
 
     /** Secuencia completa de entrada. */
-    async function entrar(conIntro) {
+    async function entrar(conIntro, instantaneo) {
       console.log("[entrada] click recibido");
       iniciarMusica();
       volando = true;
       btn.disabled = true;
+      if (instantaneo) {
+        titulo.classList.add("fuera");
+        document.getElementById("atmosfera").classList.add("puesta");
+        telon.classList.add("presente", "abierto");
+        hud.classList.add("visible");
+        mundo.classList.add("fondo-fijo");
+        escenaC.classList.add("presente");
+        pasillo.classList.add("visible");
+        pintarHUD();
+        marcarPuertas();
+        return;
+      }
       titulo.classList.add("fuera");           // el título se desvanece
       await esperar(300);
 
@@ -236,7 +253,15 @@
       marcarPuertas();
     }
 
-    if (llaves().length > 0) {
+    if (new URLSearchParams(location.search).get("directo") === "1") {
+      mundo.classList.add("fondo-fijo");
+      escenaC.classList.add("presente");
+      hud.classList.add("visible");
+      pasillo.classList.add("visible");
+      pintarHUD();
+      marcarPuertas();
+      iniciarMusica();
+    } else if (llaves().length > 0) {
       btn.textContent = "Volver al circo";
       btn.addEventListener("click", () => entrar(false), { once: true });
     } else {

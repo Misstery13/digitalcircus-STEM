@@ -1306,3 +1306,375 @@ body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
 @media (max-width: 720px) {
   body[data-sala="3"] .titulo-imagen { width: min(56vw, 230px); }
 }
+
+/* En el pasillo (index.html), ocultar llaves y abstracciÃ³n.
+   Solo deben verse dentro de las salas. */
+body.escenario #hud-flotante > .panel-hud:has(#hud-llaves),
+body.escenario #hud-flotante > .panel-hud:has(#hud-abstraccion) { visibility: hidden; }
+
+/* ============================================================
+   HUD de sala: LLAVES arriba-izquierda, ABSTRACCIÃ“N arriba-derecha.
+   ============================================================ */
+body.sala #rotulo-sala {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: auto;
+  transform: translateX(-50%);
+}
+
+body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+  position: fixed;
+  top: 28px;
+  left: 16px;
+  width: max-content;
+  z-index: 35;
+  margin: 0;
+}
+
+body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+  position: fixed;
+  top: 28px;
+  right: 16px;
+  z-index: 35;
+  margin: 0;
+}
+
+body.sala #rotulo-sala.con-imagen { top: 20px; }
+
+/* Durante la pregunta, la caja de Caine se oculta para no duplicar el reto */
+body.en-pregunta #subtitulo-caine { display: none !important; }
+/* ---- Botones circulares gemelos: volver y volumen ---- */
+body.sala #btn-volver,
+body.sala #control-musica {
+  position: fixed;
+  bottom: 18px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 50%;
+  z-index: 35;
+  transition: border-color 0.2s, transform 0.2s;
+}
+body.sala #btn-volver {
+  left: 18px;
+  font-family: 'Rye', serif;
+  font-size: 1.1rem;
+  color: rgba(247, 239, 220, 0.85);
+  text-decoration: none;
+}
+body.sala #control-musica {
+  left: 76px;
+  overflow: visible;
+}
+body.sala #btn-volver:hover,
+body.sala #control-musica:hover {
+  border-color: #f0d68c;
+  transform: scale(1.08);
+}
+body.sala #control-musica #btn-musica {
+  font-size: 1.2rem;
+}
+/* El slider se oculta y aparece vertical al pasar el mouse */
+body.sala #control-musica #rango-musica {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center;
+  accent-color: #f0d68c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  background: rgba(5, 3, 11, 0.85);
+  padding: 8px;
+  border-radius: 999px;
+}
+body.sala #control-musica:hover #rango-musica {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ---- Control de volumen circular tambien en el pasillo (inicio) ---- */
+body.escenario #control-musica {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 50%;
+  z-index: 35;
+  overflow: visible;
+  visibility: visible;
+}
+body.escenario #control-musica #btn-musica { font-size: 1.2rem; }
+body.escenario #control-musica #rango-musica {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center;
+  accent-color: #f0d68c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  background: rgba(5, 3, 11, 0.85);
+  padding: 8px;
+  border-radius: 999px;
+}
+body.escenario #control-musica:hover #rango-musica {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* En modo directo (volver desde una sala), no mostrar la intro del titulo */
+html.modo-directo #titulo-telon { display: none !important; }
+/* En modo directo: ocultar el circo 3D y mostrar solo el fondo de imagen */
+html.modo-directo #mundo model-viewer { opacity: 0 !important; }
+html.modo-directo #mundo {
+  background: url("../../assets/img/background.webp") center/cover no-repeat !important;
+}
+html.modo-directo #telon,
+html.modo-directo #titulo-telon { display: none !important; }
+html.modo-directo #caine-escena { opacity: 1 !important; }
+
+/* ============================================================
+   MÓVIL (max 720px) — layout limpio y unificado del HUD
+   ============================================================ */
+@media (max-width: 720px) {
+  /* --- Cámara: arriba a la derecha, para gestos --- */
+  body.sala #camara {
+    display: block !important;
+    position: fixed !important;
+    top: 52px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 60px !important;
+    height: 60px !important;
+    z-index: 25 !important;
+  }
+
+  /* --- Llaves: arriba a la izquierda, chica --- */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    position: fixed !important;
+    top: 58px !important;
+    left: 10px !important;
+    right: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+    z-index: 35 !important;
+  }
+  /* --- Abstracción: mismo nivel que llaves, a la derecha bajo la cámara --- */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    position: fixed !important;
+    top: 120px !important;
+    right: 10px !important;
+    left: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top right !important;
+    margin: 0 !important;
+    z-index: 35 !important;
+  }
+  #hud-abstraccion { width: 90px !important; }
+
+  /* --- Zona de botones: sube para no pegarse al borde --- */
+  body.sala #zona-inferior { padding-bottom: 4rem !important; }
+  body.sala #respuesta-texto { width: min(88vw, 320px) !important; }
+
+  /* --- Botón volver y volumen: abajo izquierda, separados --- */
+  body.sala #btn-volver,
+  body.escenario #btn-volver {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    top: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  body.sala #control-musica,
+  body.escenario #control-musica {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 58px !important;
+    top: auto !important;
+    right: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  /* Slider de volumen: horizontal hacia la derecha, siempre tocable */
+  body.sala #control-musica.abierto #rango-musica,
+  body.escenario #control-musica.abierto #rango-musica,
+  body.sala #control-musica:hover #rango-musica,
+  body.escenario #control-musica:hover #rango-musica {
+    position: absolute !important;
+    top: 50% !important;
+    left: 46px !important;
+    bottom: auto !important;
+    transform: translateY(-50%) rotate(0deg) !important;
+    width: 90px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+/* ============================================================
+   MÓVIL v-fix: llaves por :first-of-type (el :has fallaba),
+   y volumen del pasillo abajo izquierda.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Llaves = primer panel-hud. Forzar chica y a la izquierda */
+  body.sala #hud-flotante > .panel-hud:first-of-type {
+    position: fixed !important;
+    top: 58px !important;
+    left: 10px !important;
+    right: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+  }
+  /* Volumen del pasillo: abajo a la izquierda (no en medio de las salas) */
+  body.escenario #control-musica {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    top: auto !important;
+    right: auto !important;
+  }
+}
+/* ============================================================
+   MÓVIL final: llaves y abstracción DEBAJO del título (143px)
+   ============================================================ */
+@media (max-width: 720px) {
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 155px !important;
+    left: 10px !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 155px !important;
+    right: 10px !important;
+    transform: scale(0.62) !important;
+    transform-origin: top right !important;
+  }
+  /* La cámara baja también para no chocar */
+  body.sala #camara {
+    top: 150px !important;
+    right: 90px !important;
+  }
+}
+/* ============================================================
+   MÓVIL: solo achicar y subir las llaves (no tocar camara)
+   ============================================================ */
+@media (max-width: 720px) {
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 48px !important;
+    left: 6px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top left !important;
+  }
+}
+/* ============================================================
+   MÓVIL: camara esquina superior derecha, barras entre titulo
+   y puerta.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara arriba a la derecha, en la esquina */
+  body.sala #camara {
+    position: fixed !important;
+    top: 50px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 56px !important;
+    height: 56px !important;
+    z-index: 30 !important;
+  }
+  /* Llaves: entre el titulo y la puerta, a la izquierda */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 120px !important;
+    left: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top left !important;
+  }
+  /* Abstraccion: entre el titulo y la puerta, a la derecha */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 120px !important;
+    right: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top right !important;
+  }
+}
+/* ============================================================
+   MÓVIL: subir camara, abstraccion igual a llaves
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara mas arriba en la esquina */
+  body.sala #camara {
+    top: 44px !important;
+    right: 8px !important;
+  }
+  /* Abstraccion: mismo tamaño y nivel que llaves */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 120px !important;
+    right: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top right !important;
+  }
+  #hud-abstraccion { width: 120px !important; }
+}
+/* ============================================================
+   MÓVIL: camara mas arriba, llaves y abstraccion identicas
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara pegada arriba a la derecha */
+  body.sala #camara {
+    top: 30px !important;
+    right: 8px !important;
+  }
+  /* Llaves y abstraccion: exactamente el mismo tamaño y nivel */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves),
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 122px !important;
+    transform: scale(0.55) !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    left: 8px !important;
+    transform-origin: top left !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    right: 8px !important;
+    transform-origin: top right !important;
+  }
+  #hud-abstraccion { width: 110px !important; }
+}
+/* ============================================================
+   MÓVIL: subir salas y Caine en el pasillo, abstraccion mas grande
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Pasillo: subir las salas */
+  body.escenario #pasillo-flotante {
+    margin-bottom: 3.5rem !important;
+  }
+  /* Pasillo: subir a Caine */
+  body.escenario #caine-escena {
+    top: 40% !important;
+  }
+  /* Barra de abstraccion un poco mas grande */
+  #hud-abstraccion { width: 130px !important; }
+}

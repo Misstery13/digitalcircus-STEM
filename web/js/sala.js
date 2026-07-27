@@ -136,8 +136,9 @@ async function abrirPuerta() {
 async function hacerPregunta() {
   fase = "PREGUNTA";
   marcar(null);
+  document.body.classList.add("en-pregunta");
   fijarPregunta(TEXTOS[sala.audios.pregunta]);
-  await caineDice(sala.audios.pregunta);
+  reproducirVoz(sala.audios.pregunta);
   fase = "ESCUCHANDO";
   indicar("🎤 Di tu respuesta en voz alta (o toca «Responder»)");
 }
@@ -145,6 +146,7 @@ async function hacerPregunta() {
 async function procesarRespuesta(dicho) {
   if (fase !== "ESCUCHANDO" || !dicho) return;
   fase = "PROCESANDO"; // bloquea respuestas mientras Caine habla
+  document.body.classList.remove("en-pregunta");
 
   if (validarRespuesta(dicho, sala)) {
     marcar("acierto");
@@ -161,13 +163,16 @@ async function procesarRespuesta(dicho) {
   estado.pintarHUD();
 
   if (abstraido) {
-    // Game over suave: reset de la sala (sección 2.2)
+    // Abstracción total: se muestra el modelo abstracted y se vuelve al circo
     sonarOurNewHome();
-    await caineDice("gen_abstraccion_reset");
-    estado.resetAbstraccion();
+    ocultarPregunta();
+    escena?.classList.add("abierta");
+    if (visor) visor.src = "../assets/modelos/abstracted.glb";
+    await caineDice("gen_abstraccion_perdido");
+    await esperar(2500);
+    estado.resetTodo();
     estado.pintarHUD();
-    fallos = 0;
-    await hacerPregunta();
+    location.href = "index.html";
     return;
   }
 
