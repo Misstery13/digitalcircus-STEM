@@ -1,7 +1,7 @@
 /* ============================================================
-   escenario.css — Entrada al circo
+   escenario.css â€” Entrada al circo
    El fondo es la escena 3D real (digital_circus_scene.glb).
-   El telón se abre, la cámara entra, Caine aparece.
+   El telÃ³n se abre, la cÃ¡mara entra, Caine aparece.
    ============================================================ */
 
 body.escenario {
@@ -39,7 +39,7 @@ body.escenario {
 }
 #mundo.fondo-fijo model-viewer { opacity: 0; }
 
-/* Atmósfera encima del 3D: penumbra en los bordes y tinte cálido */
+/* AtmÃ³sfera encima del 3D: penumbra en los bordes y tinte cÃ¡lido */
 #atmosfera {
   position: fixed;
   inset: 0;
@@ -88,7 +88,7 @@ body.escenario {
 
 #caine-flota {
   width: 100%; height: 100%;
-  /* El movimiento lo genera js/caine.js vía transform */
+  /* El movimiento lo genera js/caine.js vÃ­a transform */
   transition: filter 0.2s ease;
   will-change: transform;
 }
@@ -102,9 +102,9 @@ body.escenario {
   --progress-bar-color: transparent;
 }
 
-/* ---- TELÓN ----------------------------------------------------
+/* ---- TELÃ“N ----------------------------------------------------
    Terciopelo con pliegues irregulares: varias capas de degradado
-   con periodos distintos rompen la uniformidad, más brillos finos
+   con periodos distintos rompen la uniformidad, mÃ¡s brillos finos
    y sombra profunda en los huecos.
    --------------------------------------------------------------- */
 
@@ -121,28 +121,28 @@ body.escenario {
   will-change: transform;
 
   background:
-    /* 1 · sombra de los extremos, da volumen al conjunto */
+    /* 1 Â· sombra de los extremos, da volumen al conjunto */
     linear-gradient(90deg,
       rgba(0,0,0,0.62) 0%, rgba(0,0,0,0.12) 12%,
       transparent 40%, transparent 60%,
       rgba(0,0,0,0.20) 88%, rgba(0,0,0,0.7) 100%),
 
-    /* 2 · caída de luz: más claro arriba, penumbra abajo */
+    /* 2 Â· caÃ­da de luz: mÃ¡s claro arriba, penumbra abajo */
     linear-gradient(180deg,
       rgba(255,190,150,0.16) 0%, transparent 22%,
       transparent 62%, rgba(0,0,0,0.42) 100%),
 
-    /* 3 · brillos finos en la cresta de cada pliegue */
+    /* 3 Â· brillos finos en la cresta de cada pliegue */
     repeating-linear-gradient(90deg,
       rgba(255,175,150,0.16) 0px, rgba(255,175,150,0.16) 2px,
       transparent 2px, transparent 27px),
 
-    /* 4 · pliegues secundarios, periodo distinto para romper el patrón */
+    /* 4 Â· pliegues secundarios, periodo distinto para romper el patrÃ³n */
     repeating-linear-gradient(90deg,
       rgba(0,0,0,0.30) 0px, transparent 5px,
       transparent 48px, rgba(0,0,0,0.30) 53px),
 
-    /* 5 · pliegues principales del terciopelo */
+    /* 5 Â· pliegues principales del terciopelo */
     repeating-linear-gradient(90deg,
       #34090a 0px,
       #6d1815 14px,
@@ -174,7 +174,7 @@ body.escenario {
 #telon.abierto .hoja.izq { transform: translateX(-92%) scaleX(0.5) skewY(1.2deg); }
 #telon.abierto .hoja.der { transform: translateX(92%) scaleX(0.5) skewY(-1.2deg); }
 
-/* Cenefa dorada con festón: arcos grandes y separados, no una tira apretada */
+/* Cenefa dorada con festÃ³n: arcos grandes y separados, no una tira apretada */
 #cenefa {
   position: absolute; top: 0; left: 0; right: 0; height: 120px; z-index: 2;
   background:
@@ -182,7 +182,7 @@ body.escenario {
     linear-gradient(180deg, rgba(255,255,255,0.4) 0%, transparent 22%),
     /* volumen del dorado */
     linear-gradient(180deg, #f0d68c 0%, #d9ab4e 45%, #a8781f 100%);
-  /* festones grandes: círculos de 60px de radio, separados 120px */
+  /* festones grandes: cÃ­rculos de 60px de radio, separados 120px */
   -webkit-mask-image: radial-gradient(circle 60px at 60px 120px, transparent 58px, #000 60px);
   mask-image: radial-gradient(circle 60px at 60px 120px, transparent 58px, #000 60px);
   -webkit-mask-size: 120px 120px; mask-size: 120px 120px;
@@ -190,7 +190,7 @@ body.escenario {
   filter: drop-shadow(0 8px 12px rgba(0,0,0,0.6));
   transition: transform 2s ease-in-out;
 }
-/* Bolitas doradas colgando en la punta de cada festón */
+/* Bolitas doradas colgando en la punta de cada festÃ³n */
 #cenefa::after {
   content: "";
   position: absolute;
@@ -202,7 +202,7 @@ body.escenario {
 }
 #telon.abierto #cenefa { transform: translateY(-46px); }
 
-/* Reflectores móviles sobre el telón cerrado, como en la intro */
+/* Reflectores mÃ³viles sobre el telÃ³n cerrado, como en la intro */
 #luces-telon {
   position: absolute; inset: 0; z-index: 3;
   overflow: hidden;
@@ -388,7 +388,7 @@ body.escenario {
 }
 
 /* ============================================================
-   SALAS Y PORTAL — misma lógica: la escena es la pantalla
+   SALAS Y PORTAL â€” misma lÃ³gica: la escena es la pantalla
    ============================================================ */
 
 body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh; }
@@ -406,7 +406,7 @@ body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh
   --poster-color: transparent;
 }
 
-/* Viñeta: oscurece los bordes para que la UI se lea sin cajas */
+/* ViÃ±eta: oscurece los bordes para que la UI se lea sin cajas */
 #vineta {
   position: fixed;
   inset: 0;
@@ -416,7 +416,7 @@ body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh
     radial-gradient(ellipse 75% 65% at 50% 45%, transparent 40%, rgba(6,4,13,0.82) 100%);
 }
 
-/* Rótulo de la sala, arriba al centro */
+/* RÃ³tulo de la sala, arriba al centro */
 #rotulo-sala {
   position: absolute;
   top: 0; left: 50%;
@@ -443,7 +443,7 @@ body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh
   color: rgba(247,239,220,0.66);
 }
 
-/* Indicación de la acción esperada (gesto) */
+/* IndicaciÃ³n de la acciÃ³n esperada (gesto) */
 #indicacion {
   margin: 0;
   padding: 0.55rem 1.3rem;
@@ -463,7 +463,7 @@ body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh
   50%      { box-shadow: 0 0 0 10px rgba(240,214,140,0); }
 }
 
-/* Cámara del usuario: círculo, no rectángulo con borde */
+/* CÃ¡mara del usuario: cÃ­rculo, no rectÃ¡ngulo con borde */
 #camara {
   position: fixed;
   right: 14px; bottom: 14px;
@@ -506,7 +506,7 @@ body.sala { margin: 0; background: #06040d; overflow: hidden; min-height: 100dvh
   text-align: center;
 }
 
-/* Glitch de abstracción sobre TODA la escena */
+/* Glitch de abstracciÃ³n sobre TODA la escena */
 body[data-abstraccion="1"] { filter: saturate(1.25) contrast(1.05); }
 body[data-abstraccion="2"] { filter: saturate(1.5) contrast(1.12) hue-rotate(8deg); }
 body[data-abstraccion="3"] {
@@ -529,12 +529,12 @@ body[data-abstraccion="4"] {
 }
 
 /* ============================================================
-   §2.2 — Glitch por capa superpuesta.
+   Â§2.2 â€” Glitch por capa superpuesta.
    Anula el filter sobre <body>: con 10 elementos position:fixed
    en este layout, un filter/transform en body los reancla al
    body en vez de a la ventana y descoloca toda la interfaz.
-   Mismo efecto visual, sin ese efecto secundario, y más rápido
-   (no repinta la página entera en cada frame).
+   Mismo efecto visual, sin ese efecto secundario, y mÃ¡s rÃ¡pido
+   (no repinta la pÃ¡gina entera en cada frame).
    ============================================================ */
 
 body[data-abstraccion] { filter: none !important; animation: none !important; }
@@ -629,7 +629,7 @@ body[data-abstraccion="4"] #capa-glitch {
 
 
 /* ============================================================
-   Título de sala como imagen + escena enmarcada con puertas
+   TÃ­tulo de sala como imagen + escena enmarcada con puertas
    ============================================================ */
 
 #rotulo-sala.con-imagen {
@@ -659,16 +659,16 @@ body.sala #escena-sala {
   background: radial-gradient(ellipse at 50% 62%, #1b1430 0%, #06040d 78%);
 }
 
-/* Viñeta más suave: con la escena enmarcada ya no hace falta tanto */
+/* ViÃ±eta mÃ¡s suave: con la escena enmarcada ya no hace falta tanto */
 body.sala #vineta {
   background: radial-gradient(ellipse 85% 75% at 50% 45%,
     transparent 55%, rgba(6, 4, 13, 0.55) 100%);
 }
 
-/* La caja de Caine no debe ocupar espacio cuando está vacía */
+/* La caja de Caine no debe ocupar espacio cuando estÃ¡ vacÃ­a */
 #subtitulo-caine:empty { display: none; }
 
-/* ---- Puertas del circo sobre la escena (§3: mano abierta) ---- */
+/* ---- Puertas del circo sobre la escena (Â§3: mano abierta) ---- */
 .puerta-escena {
   position: absolute;
   top: 0;
@@ -725,7 +725,7 @@ body.sala #escena-sala::after {
   .puerta-escena { transition-duration: 0.3s; }
 }
 
-/* ---- Subtítulo de Caine: ahora sostiene la pregunta ---- */
+/* ---- SubtÃ­tulo de Caine: ahora sostiene la pregunta ---- */
 body.sala #subtitulo-caine {
   max-width: min(62ch, 78vw);
   font-size: clamp(0.9rem, 1.9vw, 1.05rem);
@@ -737,7 +737,7 @@ body.sala #subtitulo-caine:empty { display: none; }
 /* Respiro entre el marco y los controles */
 body.sala #zona-inferior { gap: 0.7rem; padding-bottom: 0.6rem; }
 
-/* La cámara no debe pisar el campo de respuesta */
+/* La cÃ¡mara no debe pisar el campo de respuesta */
 body.sala #camara {
   right: 18px;
   bottom: 18px;
@@ -748,7 +748,7 @@ body.sala #camara {
 #modo-botones { opacity: 0.7; transition: opacity 0.2s; }
 #modo-botones:hover, #modo-botones:focus-within { opacity: 1; }
 
-/* ---- Ajuste de posición: título más abajo, marco acompañando ---- */
+/* ---- Ajuste de posiciÃ³n: tÃ­tulo mÃ¡s abajo, marco acompaÃ±ando ---- */
 #rotulo-sala.con-imagen { top: clamp(0.7rem, 2.2vh, 1.6rem); }
 
 .titulo-imagen { width: clamp(130px, 17vw, 210px); }
@@ -760,7 +760,7 @@ body.sala #escena-sala {
 }
 
 /* ============================================================
-   Realimentación visual de respuesta (§2.3)
+   RealimentaciÃ³n visual de respuesta (Â§2.3)
    ============================================================ */
 
 #subtitulo-caine.es-acierto {
@@ -790,9 +790,9 @@ body.sala #escena-sala {
 }
 
 /* ============================================================
-   HABITACIÓN — decorado en perspectiva por sala (§4)
+   HABITACIÃ“N â€” decorado en perspectiva por sala (Â§4)
    Construida con CSS: no depende de los .glb, que son
-   personajes sueltos sin ambientación.
+   personajes sueltos sin ambientaciÃ³n.
    Caja de 5 caras: techo, dos paredes laterales, fondo y piso.
    ============================================================ */
 
@@ -806,7 +806,7 @@ body {
   --hab-luz: #ffd9a0;
 }
 
-/* Sala 1 · Gangle · teatral, terracota cálido */
+/* Sala 1 Â· Gangle Â· teatral, terracota cÃ¡lido */
 body[data-sala="1"] {
   --hab-pared: #8f3a1a;
   --hab-pared-alta: #c06822;
@@ -815,7 +815,7 @@ body[data-sala="1"] {
   --hab-piso-b: #4a2c20;
   --hab-luz: #ffd9a0;
 }
-/* Sala 2 · Ragatha · costurero, rosa apagado */
+/* Sala 2 Â· Ragatha Â· costurero, rosa apagado */
 body[data-sala="2"] {
   --hab-pared: #7d4a5e;
   --hab-pared-alta: #b87a90;
@@ -824,7 +824,7 @@ body[data-sala="2"] {
   --hab-piso-b: #4a2c38;
   --hab-luz: #ffd4e2;
 }
-/* Sala 3 · Kinger · fortaleza de almohadas, morado */
+/* Sala 3 Â· Kinger Â· fortaleza de almohadas, morado */
 body[data-sala="3"] {
   --hab-pared: #3f2f6b;
   --hab-pared-alta: #6b52a8;
@@ -833,7 +833,7 @@ body[data-sala="3"] {
   --hab-piso-b: #2b2050;
   --hab-luz: #c9b6ff;
 }
-/* Sala 4 · Zooble · piezas y engranajes, turquesa */
+/* Sala 4 Â· Zooble Â· piezas y engranajes, turquesa */
 body[data-sala="4"] {
   --hab-pared: #1d5a5e;
   --hab-pared-alta: #2f8f8c;
@@ -842,7 +842,7 @@ body[data-sala="4"] {
   --hab-piso-b: #17403f;
   --hab-luz: #9ff0e4;
 }
-/* Sala 5 · Pomni · sobria, azul digital */
+/* Sala 5 Â· Pomni Â· sobria, azul digital */
 body[data-sala="5"] {
   --hab-pared: #2a2350;
   --hab-pared-alta: #4a3f80;
@@ -892,7 +892,7 @@ body[data-sala="5"] {
   filter: brightness(0.86);
 }
 
-/* Pared del fondo, con zócalo */
+/* Pared del fondo, con zÃ³calo */
 .hab-fondo {
   position: absolute;
   left: 22%; right: 22%;
@@ -961,14 +961,14 @@ body[data-sala="5"] {
 }
 
 /* ============================================================
-   FUERA DEL MARCO — el circo alrededor de la escena.
+   FUERA DEL MARCO â€” el circo alrededor de la escena.
    El fondo toma el color de la sala activa, y el marco lleva
    una guirnalda de bombillas estilo marquesina de feria.
    ============================================================ */
 
 body.sala {
   background:
-    /* halo del color de la sala, detrás del marco */
+    /* halo del color de la sala, detrÃ¡s del marco */
     radial-gradient(ellipse 62% 48% at 50% 40%,
       color-mix(in srgb, var(--hab-luz) 22%, transparent) 0%,
       transparent 68%),
@@ -1043,7 +1043,7 @@ body.sala::after {
   50%      { opacity: 1; }
 }
 
-/* La viñeta ya no debe apagar el color del fondo */
+/* La viÃ±eta ya no debe apagar el color del fondo */
 body.sala #vineta {
   background: radial-gradient(ellipse 95% 85% at 50% 45%,
     transparent 62%, rgba(8, 5, 26, 0.45) 100%);
@@ -1054,7 +1054,7 @@ body.sala #vineta {
 }
 
 /* ============================================================
-   Panel fijo del reto — la pregunta se queda toda la sala
+   Panel fijo del reto â€” la pregunta se queda toda la sala
    ============================================================ */
 
 #pregunta-fija {
@@ -1095,7 +1095,7 @@ body.sala #vineta {
   line-height: 1.4;
 }
 
-/* El subtítulo pasa a ser solo la reacción de Caine */
+/* El subtÃ­tulo pasa a ser solo la reacciÃ³n de Caine */
 body.sala #subtitulo-caine {
   font-style: italic;
   max-width: min(56ch, 74vw);
@@ -1120,7 +1120,7 @@ body.sala #subtitulo-caine {
   transform: none;
 }
 
-/* Un poco más de sitio abajo para el panel */
+/* Un poco mÃ¡s de sitio abajo para el panel */
 body.sala #escena-sala {
   inset: clamp(150px, 22vh, 200px)
          clamp(20px, 11vw, 220px)
@@ -1129,12 +1129,12 @@ body.sala #escena-sala {
 
 
 /* ============================================================
-   MÓVIL EN VERTICAL — reordena el HUD y ajusta proporciones
+   MÃ“VIL EN VERTICAL â€” reordena el HUD y ajusta proporciones
    ============================================================ */
 
 @media (max-width: 720px) {
 
-  /* El HUD pasa a dos filas: título arriba, indicadores debajo */
+  /* El HUD pasa a dos filas: tÃ­tulo arriba, indicadores debajo */
   body.sala #hud-flotante {
     flex-wrap: wrap;
     justify-content: center;
@@ -1154,7 +1154,7 @@ body.sala #escena-sala {
   }
   body.sala .panel-hud { padding: 0.3rem 0.8rem; }
 
-  /* El marco: rectángulo ancho pegado a los bordes */
+  /* El marco: rectÃ¡ngulo ancho pegado a los bordes */
   body.sala #escena-sala {
     inset: auto 10px auto 10px;
     top: clamp(120px, 20vh, 190px);
@@ -1163,7 +1163,7 @@ body.sala #escena-sala {
     border-radius: 16px;
   }
 
-  /* Bombillas más juntas y pequeñas */
+  /* Bombillas mÃ¡s juntas y pequeÃ±as */
   #escena-sala::before {
     padding: 10px;
     background-size: 22px 22px;
@@ -1176,7 +1176,7 @@ body.sala #escena-sala {
     padding-bottom: 0.4rem;
   }
 
-  /* La cámara, pequeña y arriba a la derecha: no estorba */
+  /* La cÃ¡mara, pequeÃ±a y arriba a la derecha: no estorba */
   body.sala #camara {
     top: 78px;
     right: 10px;
@@ -1185,7 +1185,7 @@ body.sala #escena-sala {
     border-width: 2px;
   }
 
-  /* Textos y botones a escala de móvil */
+  /* Textos y botones a escala de mÃ³vil */
   #pregunta-fija .texto { font-size: 0.82rem; line-height: 1.35; }
   #pregunta-fija.visible { max-height: 11rem; padding: 0.45rem 0.9rem 0.55rem; }
   body.sala #subtitulo-caine {
@@ -1203,7 +1203,7 @@ body.sala #escena-sala {
   body.sala::before { height: 6px; }
 }
 
-/* Pantallas muy bajas (móvil apaisado): el marco se encoge */
+/* Pantallas muy bajas (mÃ³vil apaisado): el marco se encoge */
 @media (max-height: 520px) and (orientation: landscape) {
   body.sala #escena-sala {
     top: clamp(70px, 16vh, 110px);
@@ -1213,7 +1213,7 @@ body.sala #escena-sala {
   body.sala #camara { width: 52px; top: 62px; }
 }
 
-/* ---- Correcciones móvil: HUD fuera del marco, marco apaisado ---- */
+/* ---- Correcciones mÃ³vil: HUD fuera del marco, marco apaisado ---- */
 @media (max-width: 720px) {
 
   /* El HUD ocupa su propia franja arriba y no crece */
@@ -1224,10 +1224,10 @@ body.sala #escena-sala {
     row-gap: 0.3rem;
   }
 
-  /* Título más compacto: deja sitio a las llaves */
+  /* TÃ­tulo mÃ¡s compacto: deja sitio a las llaves */
   .titulo-imagen { width: min(46vw, 190px); }
 
-  /* Marco: rectángulo ancho, no cuadrado */
+  /* Marco: rectÃ¡ngulo ancho, no cuadrado */
   body.sala #escena-sala {
     top: clamp(150px, 25vh, 215px);
     height: clamp(150px, 26vh, 210px);
@@ -1242,7 +1242,7 @@ body.sala #escena-sala {
     padding: 0 8px 0.5rem;
   }
 
-  /* La cámara baja al hueco libre entre el marco y los botones */
+  /* La cÃ¡mara baja al hueco libre entre el marco y los botones */
   body.sala #camara {
     top: auto;
     bottom: 12px;
@@ -1251,7 +1251,7 @@ body.sala #escena-sala {
   }
 }
 
-/* ---- Ajuste final móvil: cerrar el hueco y liberar la cámara ---- */
+/* ---- Ajuste final mÃ³vil: cerrar el hueco y liberar la cÃ¡mara ---- */
 @media (max-width: 720px) {
 
   /* El marco crece y baja: el hueco se reparte mejor */
@@ -1267,7 +1267,7 @@ body.sala #escena-sala {
     gap: 0.45rem;
   }
 
-  /* La cámara, arriba a la derecha junto al HUD */
+  /* La cÃ¡mara, arriba a la derecha junto al HUD */
   body.sala #camara {
     top: 12px;
     right: 10px;
@@ -1277,43 +1277,43 @@ body.sala #escena-sala {
     z-index: 25;
   }
 
-  /* El campo de respuesta no compite con la cámara */
+  /* El campo de respuesta no compite con la cÃ¡mara */
   #respuesta-texto { width: min(90vw, 320px); }
 }
 
-/* ---- Retoques finales móvil ---- */
+/* ---- Retoques finales mÃ³vil ---- */
 @media (max-width: 720px) {
   body.sala #escena-sala { height: clamp(170px, 28vh, 240px); }
 }
 
-/* Sin vídeo, la cámara no debe verse como un agujero negro */
+/* Sin vÃ­deo, la cÃ¡mara no debe verse como un agujero negro */
 body.sin-camara #camara { display: none; }
 
 /* ============================================================
-   Ajuste de los títulos con los cinco PNG definitivos
+   Ajuste de los tÃ­tulos con los cinco PNG definitivos
    ============================================================ */
 
-/* Sombra más sutil: al 85% las piezas densas (engranajes,
-   circuitos) suman sombras entre sí y parecen un fondo sólido. */
+/* Sombra mÃ¡s sutil: al 85% las piezas densas (engranajes,
+   circuitos) suman sombras entre sÃ­ y parecen un fondo sÃ³lido. */
 .titulo-imagen {
   filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.55));
 }
 
-/* Kinger es más apaisado que los demás (687x363 vs 612x408):
-   se le da más ancho para que los cinco ocupen alto similar. */
+/* Kinger es mÃ¡s apaisado que los demÃ¡s (687x363 vs 612x408):
+   se le da mÃ¡s ancho para que los cinco ocupen alto similar. */
 body[data-sala="3"] .titulo-imagen { width: clamp(160px, 21vw, 260px); }
 
 @media (max-width: 720px) {
   body[data-sala="3"] .titulo-imagen { width: min(56vw, 230px); }
 }
 
-/* En el pasillo (index.html), ocultar llaves y abstracción.
+/* En el pasillo (index.html), ocultar llaves y abstracciÃ³n.
    Solo deben verse dentro de las salas. */
 body.escenario #hud-flotante > .panel-hud:has(#hud-llaves),
 body.escenario #hud-flotante > .panel-hud:has(#hud-abstraccion) { visibility: hidden; }
 
 /* ============================================================
-   HUD de sala: LLAVES arriba-izquierda, ABSTRACCIÓN arriba-derecha.
+   HUD de sala: LLAVES arriba-izquierda, ABSTRACCIÃ“N arriba-derecha.
    ============================================================ */
 body.sala #rotulo-sala {
   position: absolute;
@@ -1400,4 +1400,281 @@ body.sala #control-musica #rango-musica {
 body.sala #control-musica:hover #rango-musica {
   opacity: 1;
   pointer-events: auto;
+}
+
+/* ---- Control de volumen circular tambien en el pasillo (inicio) ---- */
+body.escenario #control-musica {
+  position: fixed;
+  bottom: 18px;
+  left: 18px;
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(5, 3, 11, 0.6);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(240, 214, 140, 0.35);
+  border-radius: 50%;
+  z-index: 35;
+  overflow: visible;
+  visibility: visible;
+}
+body.escenario #control-musica #btn-musica { font-size: 1.2rem; }
+body.escenario #control-musica #rango-musica {
+  position: absolute;
+  bottom: 64px;
+  left: 50%;
+  width: 80px;
+  transform: translateX(-50%) rotate(-90deg);
+  transform-origin: center;
+  accent-color: #f0d68c;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  background: rgba(5, 3, 11, 0.85);
+  padding: 8px;
+  border-radius: 999px;
+}
+body.escenario #control-musica:hover #rango-musica {
+  opacity: 1;
+  pointer-events: auto;
+}
+/* En modo directo (volver desde una sala), no mostrar la intro del titulo */
+html.modo-directo #titulo-telon { display: none !important; }
+/* En modo directo: ocultar el circo 3D y mostrar solo el fondo de imagen */
+html.modo-directo #mundo model-viewer { opacity: 0 !important; }
+html.modo-directo #mundo {
+  background: url("../../assets/img/background.webp") center/cover no-repeat !important;
+}
+html.modo-directo #telon,
+html.modo-directo #titulo-telon { display: none !important; }
+html.modo-directo #caine-escena { opacity: 1 !important; }
+
+/* ============================================================
+   MÓVIL (max 720px) — layout limpio y unificado del HUD
+   ============================================================ */
+@media (max-width: 720px) {
+  /* --- Cámara: arriba a la derecha, para gestos --- */
+  body.sala #camara {
+    display: block !important;
+    position: fixed !important;
+    top: 52px !important;
+    right: 10px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 60px !important;
+    height: 60px !important;
+    z-index: 25 !important;
+  }
+
+  /* --- Llaves: arriba a la izquierda, chica --- */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    position: fixed !important;
+    top: 58px !important;
+    left: 10px !important;
+    right: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+    z-index: 35 !important;
+  }
+  /* --- Abstracción: mismo nivel que llaves, a la derecha bajo la cámara --- */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    position: fixed !important;
+    top: 120px !important;
+    right: 10px !important;
+    left: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top right !important;
+    margin: 0 !important;
+    z-index: 35 !important;
+  }
+  #hud-abstraccion { width: 90px !important; }
+
+  /* --- Zona de botones: sube para no pegarse al borde --- */
+  body.sala #zona-inferior { padding-bottom: 4rem !important; }
+  body.sala #respuesta-texto { width: min(88vw, 320px) !important; }
+
+  /* --- Botón volver y volumen: abajo izquierda, separados --- */
+  body.sala #btn-volver,
+  body.escenario #btn-volver {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    top: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  body.sala #control-musica,
+  body.escenario #control-musica {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 58px !important;
+    top: auto !important;
+    right: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+  }
+  /* Slider de volumen: horizontal hacia la derecha, siempre tocable */
+  body.sala #control-musica.abierto #rango-musica,
+  body.escenario #control-musica.abierto #rango-musica,
+  body.sala #control-musica:hover #rango-musica,
+  body.escenario #control-musica:hover #rango-musica {
+    position: absolute !important;
+    top: 50% !important;
+    left: 46px !important;
+    bottom: auto !important;
+    transform: translateY(-50%) rotate(0deg) !important;
+    width: 90px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+}
+/* ============================================================
+   MÓVIL v-fix: llaves por :first-of-type (el :has fallaba),
+   y volumen del pasillo abajo izquierda.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Llaves = primer panel-hud. Forzar chica y a la izquierda */
+  body.sala #hud-flotante > .panel-hud:first-of-type {
+    position: fixed !important;
+    top: 58px !important;
+    left: 10px !important;
+    right: auto !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+    margin: 0 !important;
+  }
+  /* Volumen del pasillo: abajo a la izquierda (no en medio de las salas) */
+  body.escenario #control-musica {
+    position: fixed !important;
+    bottom: 10px !important;
+    left: 10px !important;
+    top: auto !important;
+    right: auto !important;
+  }
+}
+/* ============================================================
+   MÓVIL final: llaves y abstracción DEBAJO del título (143px)
+   ============================================================ */
+@media (max-width: 720px) {
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 155px !important;
+    left: 10px !important;
+    transform: scale(0.62) !important;
+    transform-origin: top left !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 155px !important;
+    right: 10px !important;
+    transform: scale(0.62) !important;
+    transform-origin: top right !important;
+  }
+  /* La cámara baja también para no chocar */
+  body.sala #camara {
+    top: 150px !important;
+    right: 90px !important;
+  }
+}
+/* ============================================================
+   MÓVIL: solo achicar y subir las llaves (no tocar camara)
+   ============================================================ */
+@media (max-width: 720px) {
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 48px !important;
+    left: 6px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top left !important;
+  }
+}
+/* ============================================================
+   MÓVIL: camara esquina superior derecha, barras entre titulo
+   y puerta.
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara arriba a la derecha, en la esquina */
+  body.sala #camara {
+    position: fixed !important;
+    top: 50px !important;
+    right: 8px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 56px !important;
+    height: 56px !important;
+    z-index: 30 !important;
+  }
+  /* Llaves: entre el titulo y la puerta, a la izquierda */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    top: 120px !important;
+    left: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top left !important;
+  }
+  /* Abstraccion: entre el titulo y la puerta, a la derecha */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 120px !important;
+    right: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top right !important;
+  }
+}
+/* ============================================================
+   MÓVIL: subir camara, abstraccion igual a llaves
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara mas arriba en la esquina */
+  body.sala #camara {
+    top: 44px !important;
+    right: 8px !important;
+  }
+  /* Abstraccion: mismo tamaño y nivel que llaves */
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 120px !important;
+    right: 8px !important;
+    transform: scale(0.55) !important;
+    transform-origin: top right !important;
+  }
+  #hud-abstraccion { width: 120px !important; }
+}
+/* ============================================================
+   MÓVIL: camara mas arriba, llaves y abstraccion identicas
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Camara pegada arriba a la derecha */
+  body.sala #camara {
+    top: 30px !important;
+    right: 8px !important;
+  }
+  /* Llaves y abstraccion: exactamente el mismo tamaño y nivel */
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves),
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    top: 122px !important;
+    transform: scale(0.55) !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-llaves) {
+    left: 8px !important;
+    transform-origin: top left !important;
+  }
+  body.sala #hud-flotante > .panel-hud:has(#hud-abstraccion) {
+    right: 8px !important;
+    transform-origin: top right !important;
+  }
+  #hud-abstraccion { width: 110px !important; }
+}
+/* ============================================================
+   MÓVIL: subir salas y Caine en el pasillo, abstraccion mas grande
+   ============================================================ */
+@media (max-width: 720px) {
+  /* Pasillo: subir las salas */
+  body.escenario #pasillo-flotante {
+    margin-bottom: 3.5rem !important;
+  }
+  /* Pasillo: subir a Caine */
+  body.escenario #caine-escena {
+    top: 40% !important;
+  }
+  /* Barra de abstraccion un poco mas grande */
+  #hud-abstraccion { width: 130px !important; }
 }

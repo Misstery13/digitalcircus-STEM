@@ -170,9 +170,9 @@ async function procesarRespuesta(dicho) {
     if (visor) visor.src = "../assets/modelos/abstracted.glb";
     await caineDice("gen_abstraccion_perdido");
     await esperar(2500);
-    estado.resetAbstraccion();
+    estado.resetTodo();
     estado.pintarHUD();
-    location.href = "index.html?directo=1";
+    location.href = "index.html";
     return;
   }
 
