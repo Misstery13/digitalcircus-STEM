@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>La CÃ¡mara del Portal â€” Digital Circus STEM Escape</title>
+  <title>La Cámara del Portal — Digital Circus STEM Escape</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
   <link rel="stylesheet" href="css/escenario.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
@@ -19,7 +19,7 @@
       shadow-intensity="1"
       exposure="1.1"
       camera-orbit="0deg 78deg 9m"
-      alt="La cÃ¡mara del portal">
+      alt="La cámara del portal">
     </model-viewer>
   </div>
 
@@ -33,11 +33,11 @@
         <div id="hud-llaves"></div>
       </div>
       <div id="rotulo-sala">
-        <span class="personaje">ðŸŒ€ La CÃ¡mara del Portal</span>
+        <span class="personaje">🌀 La Cámara del Portal</span>
         <span class="materia">La salida</span>
       </div>
       <div class="panel-hud" style="visibility:hidden">
-        <span class="hud-etiqueta">Â·</span>
+        <span class="hud-etiqueta">·</span>
       </div>
     </div>
 
@@ -49,7 +49,7 @@
       </div>
       <div id="modo-botones" hidden>
         <div class="fila-botones">
-          <button id="btn-mano">ðŸ– Mano abierta</button>
+          <button id="btn-mano">🖐 Mano abierta</button>
         </div>
       </div>
     </div>
@@ -83,7 +83,7 @@
         visor.animationName = ANIMACIONES.portal;
         visor.play({ repetitions: 1 });
       } catch {}
-      indicacion.textContent = "âœ¨ El portal se abre...";
+      indicacion.textContent = "✨ El portal se abre...";
       await caineDice("99_final");
       // El giro: cruzas... y despiertas en el circo de siempre.
       document.body.style.transition = "opacity 1.2s";
@@ -93,7 +93,7 @@
 
     btnIniciar.addEventListener("click", async () => {
       btnIniciar.hidden = true;
-      indicacion.textContent = "ðŸ– Mano abierta para activar el portal";
+      indicacion.textContent = "🖐 Mano abierta para activar el portal";
       try {
         await iniciarGestos(document.getElementById("camara"), { manoAbierta: activarPortal });
       } catch {
