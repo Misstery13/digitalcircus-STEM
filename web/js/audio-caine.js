@@ -26,7 +26,8 @@ export const SUBTITULOS = {
   s3_pregunta: "¿Cómo se le llama a un error en el código de un programa?",
   s4_pregunta: "¿Cómo se llama el 'cerebro' de una computadora?",
   s5_pregunta: "Aprendo, hablo contigo y adapto mis pistas. ¿Qué tipo de programa soy? Inteligencia... ¿qué?",
-  "99_final": "¡Superaste mi juego! Tu premio: ¡UNA NUEVA AVENTURA MAÑANA! Aquí nadie se va de verdad~",
+  jax_portal: "¿La salida? Jajaja... claro que sí, amiguito. Escanea esa puertita y te llevará a la libertad. Confía en mí, ¿qué podría salir mal?",
+  "99_final": "¿Buscabas la salida? ¡Ay, dulzura! En el Circo Digital no hay salidas, solo entradas. ¡Bienvenido de nuevo a la función!",
 };
 
 let audioActual = null;
