@@ -438,6 +438,11 @@ body.escenario {
   background: rgba(34,18,54,0.88);
 }
 .puerta .emoji { font-size: clamp(1.4rem, 3.4vw, 1.9rem); line-height: 1; }
+.puerta img.emoji {
+  width: clamp(38px, 7vw, 52px);
+  height: clamp(38px, 7vw, 52px);
+  object-fit: contain;
+}
 .puerta .nombre { font-family: 'Rye', serif; font-size: 0.88rem; }
 .puerta .materia { font-size: 0.6rem; opacity: 0.62; text-align: center; }
 .puerta.lista { border-color: #f0d68c; box-shadow: 0 0 20px rgba(240,214,140,0.45); }
