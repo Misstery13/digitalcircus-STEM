@@ -6,6 +6,8 @@
 // SIN audio (modo silencioso para desarrollo).
 // ============================================================
 
+import { atenuarMusica } from "./musica.js";
+
 const RUTA = "audio_caine/";
 
 // Subtítulos: mismo texto que herramientas/generar_voces_caine.js.
@@ -107,11 +109,16 @@ export function caineDice(id) {
   }
 
   return new Promise((resolver) => {
-    if (audioActual) audioActual.pause();
+    if (audioActual) {
+      audioActual.pause();
+      atenuarMusica(false);
+    }
     const audio = new Audio(`${RUTA}${id}.mp3`);
     audioActual = audio;
 
     const terminar = () => {
+      if (audioActual === audio) audioActual = null;
+      atenuarMusica(false);
       if (sub) sub.classList.remove("visible");
       emitir(0);
       resolver();
@@ -125,6 +132,7 @@ export function caineDice(id) {
       simularHabla(estimado);
       setTimeout(terminar, estimado);
     };
+    atenuarMusica(true);
     audio.play()
       .then(() => conectarAnalisis(audio))
       .catch(() => {
