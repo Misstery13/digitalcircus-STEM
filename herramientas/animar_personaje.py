@@ -70,9 +70,12 @@ PISTAS = {
     "brazoD":  ["r_upperarm", "upperarm.r", "upperarm_r", "arm.r", "arm_r",
                 "rightarm", "arm.right", "brazo.r", "shoulder.r", "r_shoulder",
                 "hombro.r", "r_clavicle"],
-    "piernaI": ["l_thigh", "l_leg", "thigh.l", "thigh_l", "leg.l", "leg_l",
+    # Mismo cuidado que arriba: "upper_leg" contiene "r_leg" como
+    # substring ("uppe-R" + "_LEG") sin importar el lado — nada de
+    # "r_leg"/"l_leg" sueltos aquí tampoco.
+    "piernaI": ["l_thigh", "thigh.l", "thigh_l", "leg.l", "leg_l",
                 "leftleg", "leg.left", "pierna.l", "upleg.l", "hip_l", "hip.l"],
-    "piernaD": ["r_thigh", "r_leg", "thigh.r", "thigh_r", "leg.r", "leg_r",
+    "piernaD": ["r_thigh", "thigh.r", "thigh_r", "leg.r", "leg_r",
                 "rightleg", "leg.right", "pierna.r", "upleg.r", "hip_r", "hip.r"],
     "torso":   ["spine", "torso", "chest", "pecho", "cuerpo", "hips", "pelvis"],
 }
