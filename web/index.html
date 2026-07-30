@@ -261,7 +261,12 @@
       await esperar(900);
 
       // 5 · presentación
-      if (conIntro) await caineDice("00_intro");
+      if (new URLSearchParams(location.search).get("desde") === "portal") {
+        await caineDice("99_final");
+        resetTodo(); // el giro es que "no hay salida": vuelve a empezar de cero
+      } else if (conIntro) {
+        await caineDice("00_intro");
+      }
       pasillo.classList.add("visible");
       pintarHUD();
       marcarPuertas();
