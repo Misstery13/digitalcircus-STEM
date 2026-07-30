@@ -71,14 +71,24 @@ export function sonarOurNewHome() {
 }
 
 let volumenPrevio = null;
+let atenuacionesActivas = 0;
 
-/** Baja el volumen mientras Caine habla en el chat (y lo restaura después). */
+/** Baja el volumen mientras Caine habla (chat o mensajes de voz) y lo restaura después. */
 export function atenuarMusica(activo) {
   if (!audio) return;
   if (activo) {
-    if (volumenPrevio === null) volumenPrevio = audio.volume;
-    audio.volume = volumenPrevio * 0.25;
-  } else if (volumenPrevio !== null) {
+    atenuacionesActivas += 1;
+    if (atenuacionesActivas === 1) {
+      if (volumenPrevio === null) volumenPrevio = audio.volume;
+      audio.volume = Math.max(0, volumenPrevio * 0.25);
+    }
+    return;
+  }
+
+  if (atenuacionesActivas > 0) {
+    atenuacionesActivas = Math.max(0, atenuacionesActivas - 1);
+  }
+  if (atenuacionesActivas === 0 && volumenPrevio !== null) {
     audio.volume = volumenPrevio;
     volumenPrevio = null;
   }
