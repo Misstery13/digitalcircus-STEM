@@ -132,8 +132,8 @@ El proyecto ya incluye la configuración de Vercel en [vercel.json](vercel.json)
 | Integrante | Responsabilidad |
 |---|---|
 | Diana | Pipeline 3D completo: optimización, portal (modelado propio), props, animaciones, QR |
-| Compañero 2 | Chatbot Dialogflow, voces de Caine (Fish Audio), guion, Fase 1 del documento |
-| Compañero 3 | MediaPipe, integración web, video final, compilación del documento técnico |
+| Jeancarlin | Chatbot Dialogflow, voces de Caine (Fish Audio), guion, Fase 1 del documento |
+| Byron | MediaPipe, integración web, video final, compilación del documento técnico |
 
 ## Nota legal
 
