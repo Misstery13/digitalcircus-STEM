@@ -110,32 +110,6 @@ export async function iniciarGestos(video, on = {}) {
   };
 }
 
-// ============================================================
-// Reconocimiento de voz (fallback con Web Speech API).
-// Plan A del proyecto: Dialogflow embebido (df-messenger).
-// Este fallback permite probar el flujo completo HOY,
-// sin esperar a que el agente de Dialogflow esté listo.
-// ============================================================
-
-/**
- * Escucha UNA frase corta en español y la devuelve como texto.
- * @returns {Promise<string>} lo dicho ("" si no entendió)
- */
-export function escucharRespuesta() {
-  return new Promise((resolver) => {
-    const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      // Navegador sin Web Speech → caja de texto de emergencia
-      resolver(prompt("Tu respuesta (di una palabra):") || "");
-      return;
-    }
-    const rec = new SR();
-    rec.lang = "es-MX";
-    rec.interimResults = false;
-    rec.maxAlternatives = 3;
-    rec.onresult = (e) => resolver(e.results[0][0].transcript || "");
-    rec.onerror = () => resolver("");
-    rec.onend = () => resolver("");
-    rec.start();
-  });
-}
+// Reconocimiento de voz: vive en voz.js (sin dependencia de MediaPipe),
+// se reexporta acá para no tocar los archivos que ya lo importan de gestos.js.
+export { escucharRespuesta } from "./voz.js";

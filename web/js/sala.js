@@ -7,14 +7,15 @@
 // Reglas implementadas del documento de diseño:
 //   · fallo o pista → +1 abstracción (glitch CSS progresivo)
 //   · sonrisa fuera de recompensa → −1 abstracción
-//   · abstracción = 4 → reset suave de la sala
-//   · 3 fallos → Caine regala la respuesta ("acto de caridad")
+//   · abstracción = 3 (global, todo el recorrido) → reset total del juego
+//   · 3 fallos en la misma sala → Caine regala la respuesta ("acto de caridad")
 // ============================================================
 
-import { SALAS, ANIMACIONES, validarRespuesta } from "./config-salas.js";
+import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta, normalizar } from "./config-salas.js";
 import * as estado from "./estado.js";
-import { caineDice } from "./audio-caine.js";
+import { caineDice as reproducirVoz } from "./audio-caine.js";
 import { iniciarGestos, escucharRespuesta } from "./gestos.js";
+import { sonarOurNewHome } from "./musica.js";
 
 const id = parseInt(new URLSearchParams(location.search).get("id") || "1", 10);
 const sala = SALAS[id];
@@ -24,19 +25,99 @@ if (!sala) location.href = "index.html";
 const visor = document.getElementById("visor3d");
 const btnResponder = document.getElementById("btn-responder");
 const indicacion = document.getElementById("indicacion");
+const subtitulo = document.getElementById("subtitulo-caine");
+const escena = document.getElementById("escena-sala");
+const panelPregunta = document.getElementById("pregunta-fija");
 
-document.getElementById("titulo-sala").textContent =
-  `${sala.emoji} Sala de ${sala.personaje} · ${sala.materia}`;
+const esperar = (ms) => new Promise((r) => setTimeout(r, Math.max(0, ms)));
+
+// Rótulo: imagen de título si la sala la tiene, texto si no
+const rotulo = document.getElementById("rotulo-sala");
+if (sala.tituloImg) {
+  rotulo.classList.add("con-imagen");
+  rotulo.innerHTML =
+    `<img class="titulo-imagen" src="${sala.tituloImg}" alt="Sala de ${sala.personaje} · ${sala.materia}">`;
+} else {
+  document.getElementById("nombre-personaje").textContent =
+    `${sala.emoji} ${sala.personaje}`;
+  document.getElementById("nombre-materia").textContent = sala.materia;
+}
+
 document.title = `Sala ${id} — ${sala.personaje} | Digital Circus STEM Escape`;
-visor.src = sala.modelo;
+if (sala.modelo) visor.src = sala.modelo;
 estado.pintarHUD();
 
+// ---- Panel fijo del reto ----
+// La pregunta se queda en pantalla toda la sala; las frases de
+// Caine (pistas, fallos, aciertos) van aparte en el subtítulo.
+
+function fijarPregunta(texto) {
+  if (!panelPregunta || !texto) return;
+  panelPregunta.querySelector(".texto").textContent = texto;
+  panelPregunta.classList.add("visible");
+}
+
+function ocultarPregunta() {
+  panelPregunta?.classList.remove("visible");
+}
+
+// ---- Realimentación visual (acierto / fallo) ----
+
+function marcar(tipo) {
+  if (!escena) return;
+  escena.classList.remove("acierto", "fallo");
+  void escena.offsetWidth; // reinicia la animación
+  if (tipo) escena.classList.add(tipo);
+  if (subtitulo) {
+    subtitulo.classList.remove("es-acierto", "es-fallo");
+    if (tipo === "acierto") subtitulo.classList.add("es-acierto");
+    if (tipo === "fallo") subtitulo.classList.add("es-fallo");
+  }
+}
+
+// ---- Voz de Caine con respaldo de texto ----
+// Si el mp3 no existe la promesa vuelve al instante, así que
+// se calcula una pausa de lectura según la longitud del texto.
+// Sin eso, las frases encadenadas pasan volando.
+
+function mostrarSubtitulo(texto) {
+  if (!subtitulo || !texto) return;
+  subtitulo.textContent = texto;
+  subtitulo.classList.add("visible");
+}
+
+function tiempoDeLectura(texto) {
+  return Math.min(Math.max(texto.length * 45, 2000), 7000);
+}
+
+async function caineDice(clave) {
+  const texto = TEXTOS[clave];
+  mostrarSubtitulo(texto);
+  const t0 = performance.now();
+  try {
+    await reproducirVoz(clave);
+  } catch {
+    console.warn(`Audio no disponible: ${clave}`);
+  }
+  const transcurrido = performance.now() - t0;
+  // Menos de 250 ms = el audio no sonó: deja tiempo para leer
+  if (texto && transcurrido < 250) {
+    await esperar(tiempoDeLectura(texto) - transcurrido);
+  }
+}
+
 // ---- Máquina de estados ----
-let fase = "PUERTA"; // PUERTA | PREGUNTA | ESCUCHANDO | CONFIRMAR | SONRISA | FIN
+let fase = "PUERTA"; // PUERTA | PREGUNTA | ESCUCHANDO | PROCESANDO | CONFIRMAR | SONRISA | FIN
 let fallos = 0;
 
 function indicar(texto) {
   indicacion.textContent = texto;
+}
+
+// Pista de la defensa (sección 2.2): sonreír antes de responder baja
+// la abstracción. Solo tiene sentido mostrarla si hay algo que bajar.
+function conPistaSonrisa(texto) {
+  return estado.abstraccion() > 0 ? `${texto} · 😊 Sonríe para calmar la abstracción` : texto;
 }
 
 function animar(nombre) {
@@ -52,6 +133,7 @@ function animar(nombre) {
 async function abrirPuerta() {
   if (fase !== "PUERTA") return;
   fase = "PREGUNTA";
+  escena?.classList.add("abierta");
   animar(ANIMACIONES.puerta);
   await caineDice("gen_puerta_abierta");
   await hacerPregunta();
@@ -59,46 +141,66 @@ async function abrirPuerta() {
 
 async function hacerPregunta() {
   fase = "PREGUNTA";
-  await caineDice(sala.audios.pregunta);
+  marcar(null);
+  document.body.classList.add("en-pregunta");
+  fijarPregunta(TEXTOS[sala.audios.pregunta]);
+  reproducirVoz(sala.audios.pregunta);
   fase = "ESCUCHANDO";
-  indicar("🎤 Di tu respuesta en voz alta (o toca «Responder»)");
+  indicar(conPistaSonrisa("🎤 Di tu respuesta en voz alta (o toca «Responder»)"));
 }
 
 async function procesarRespuesta(dicho) {
   if (fase !== "ESCUCHANDO" || !dicho) return;
+  if (!normalizar(dicho)) {
+    // Transcripción sin contenido útil (p. ej. solo ".") — no cuenta como fallo
+    indicar("No te escuché bien. Inténtalo de nuevo.");
+    return;
+  }
+  fase = "PROCESANDO"; // bloquea respuestas mientras Caine habla
+  document.body.classList.remove("en-pregunta");
 
   if (validarRespuesta(dicho, sala)) {
-    fase = "CONFIRMAR";
+    marcar("acierto");
     await caineDice(sala.audios.acierto);
+    fase = "CONFIRMAR";
     indicar("👍 Pulgar arriba para sellar el trato");
     return;
   }
 
   // ---- Fallo ----
   fallos++;
+  marcar("fallo");
   const abstraido = estado.subirAbstraccion();
   estado.pintarHUD();
 
-  if (abstraido) {
-    // Game over suave: reset de la sala (sección 2.2)
-    await caineDice("gen_abstraccion_reset");
-    estado.resetAbstraccion();
-    estado.pintarHUD();
-    fallos = 0;
-    await hacerPregunta();
+  if (fallos >= 3) {
+    // Acto de caridad primero: si coincide con el máximo de abstracción,
+    // Caine igual regala la respuesta antes de resetear (sección 2.3)
+    await caineDice(sala.audios.caridad);
+    fase = "ESCUCHANDO";
+    indicar(conPistaSonrisa("🎤 Repite la respuesta en voz alta"));
     return;
   }
 
-  if (fallos >= 3) {
-    // Acto de caridad: Caine regala la respuesta (sección 2.3)
-    await caineDice(sala.audios.caridad);
-    indicar("🎤 Repite la respuesta en voz alta");
-    return; // sigue en ESCUCHANDO; ahora sí acertará
+  if (abstraido) {
+    // Abstracción total (por fallos acumulados de salas previas):
+    // se muestra el modelo abstracted y se vuelve al circo
+    sonarOurNewHome();
+    ocultarPregunta();
+    escena?.classList.add("abierta");
+    if (visor) visor.src = "../assets/modelos/abstracted.glb";
+    await caineDice("gen_abstraccion_perdido");
+    await esperar(2500);
+    estado.resetTodo();
+    estado.pintarHUD();
+    location.href = "index.html";
+    return;
   }
 
   await caineDice(fallos === 1 ? "gen_fallo_1" : "gen_fallo_2");
   await caineDice(sala.audios.pistas[Math.min(fallos - 1, 1)]);
-  indicar("🎤 Inténtalo de nuevo");
+  fase = "ESCUCHANDO";
+  indicar(conPistaSonrisa("🎤 Inténtalo de nuevo"));
 }
 
 async function confirmarConPulgar() {
@@ -111,13 +213,16 @@ async function confirmarConPulgar() {
 async function sonrisaDetectada() {
   if (fase === "SONRISA") {
     fase = "FIN";
+    marcar("acierto");
+    ocultarPregunta();
     animar(ANIMACIONES.recompensa);
     await caineDice("gen_sonrisa_recompensa");
     estado.darLlave(id);
-    estado.pintarHUD();
+    estado.pintarHUD(id);
     if (sala.audios.llave) await caineDice(sala.audios.llave);
     indicar("➡️ Pasando a la siguiente sala...");
-    setTimeout(() => (location.href = sala.siguiente), 2000);
+    await esperar(1200);
+    location.href = sala.siguiente;
   } else if (fase === "ESCUCHANDO" || fase === "PREGUNTA") {
     // Sonrisa como defensa: −1 abstracción (sección 2.2)
     if (estado.abstraccion() > 0) {
@@ -131,6 +236,7 @@ async function sonrisaDetectada() {
 // ---- Arranque ----
 async function iniciar() {
   document.getElementById("btn-iniciar").hidden = true;
+  btnResponder.hidden = false;
   indicar("🖐 Muestra tu mano abierta para tocar la puerta");
 
   const video = document.getElementById("camara");
@@ -142,6 +248,7 @@ async function iniciar() {
     });
   } catch (e) {
     console.warn("Sin cámara — modo botones:", e);
+    document.body.classList.add("sin-camara");
     indicar("Sin cámara: usa los botones de abajo");
     document.getElementById("modo-botones").hidden = false;
   }
@@ -149,9 +256,32 @@ async function iniciar() {
 
 // Botones de respaldo (desarrollo sin cámara / demo de emergencia)
 document.getElementById("btn-iniciar").addEventListener("click", iniciar);
+
+// `fase` no cambia mientras escucharRespuesta() está en vuelo, así que
+// clics repetidos antes de que resuelva creaban varias instancias de
+// SpeechRecognition al mismo tiempo — eso llegó a crashear el navegador.
+// Este flag bloquea la reentrada mientras dura la escucha.
+let escuchando = false;
 btnResponder.addEventListener("click", async () => {
-  const dicho = await escucharRespuesta();
-  procesarRespuesta(dicho);
+  if (fase !== "ESCUCHANDO" || escuchando) return;
+  escuchando = true;
+  btnResponder.disabled = true;
+  indicar("🎤 Escuchando...");
+  try {
+    const dicho = await escucharRespuesta();
+    console.log("Reconocido:", dicho);
+    if (!dicho) {
+      indicar("No te escuché. Inténtalo otra vez o escribe abajo.");
+      return;
+    }
+    procesarRespuesta(dicho);
+  } catch (e) {
+    console.warn("Voz no disponible:", e);
+    indicar("La voz no está disponible. Escribe tu respuesta abajo.");
+  } finally {
+    escuchando = false;
+    btnResponder.disabled = false;
+  }
 });
 document.getElementById("btn-mano")?.addEventListener("click", abrirPuerta);
 document.getElementById("btn-pulgar")?.addEventListener("click", confirmarConPulgar);
@@ -159,5 +289,8 @@ document.getElementById("btn-sonrisa")?.addEventListener("click", sonrisaDetecta
 
 // Entrada por texto de emergencia (Enter en el campo)
 document.getElementById("respuesta-texto")?.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") procesarRespuesta(e.target.value);
+  if (e.key === "Enter") {
+    procesarRespuesta(e.target.value);
+    e.target.value = "";
+  }
 });

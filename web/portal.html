@@ -2,38 +2,94 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Cámara del Portal — Digital Circus STEM Escape</title>
-  <link rel="stylesheet" href="css/estilos.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>La Cámara del Portal — Digital Circus STEM Escape</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
+  <link rel="stylesheet" href="css/escenario.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <style>
+    #panel-salida {
+      position: fixed; inset: 0; z-index: 50;
+      display: flex; align-items: center; justify-content: center;
+      background: url("../assets/img/puerta-salida.jpeg") center/cover no-repeat;
+    }
+    #panel-salida[hidden] { display: none; }
+    #jax-mensaje { display: none; }
+    #qr-contenedor {
+      background: #fff; padding: 10px; border-radius: 8px;
+      box-shadow: 0 0 25px rgba(255, 255, 255, 0.6);
+      margin-top: -2%;
+    }
+    #qr-instruccion { display: none; }
+    #jax-visor {
+      position: fixed; left: 8%; bottom: 5%;
+      width: 280px; height: 380px;
+      background: transparent; z-index: 51;
+      pointer-events: none;
+    }
+    body.sala #control-musica { z-index: 60 !important; }
+  </style>
 </head>
-<body>
-  <h1>🌀 La Cámara del Portal</h1>
+<body class="sala">
 
-  <main>
-    <div class="hud">
-      <div>
+  <div id="escena-sala">
+    <model-viewer id="visor3d"
+      src="../assets/modelos/portal.glb"
+      camera-controls
+      autoplay="false"
+      ar
+      shadow-intensity="1"
+      exposure="1.1"
+      camera-orbit="0deg 78deg 9m"
+      alt="La cámara del portal">
+    </model-viewer>
+  </div>
+
+  <div id="vineta" aria-hidden="true"></div>
+
+  <div id="capa-ui">
+    <a href="index.html?directo=1" id="btn-volver" aria-label="Volver a las salas" title="Volver a las salas">&larr;</a>
+    <div id="hud-flotante" class="visible">
+      <div class="panel-hud">
         <span class="hud-etiqueta">Llaves</span>
         <div id="hud-llaves"></div>
       </div>
+      <div id="rotulo-sala">
+        <span class="personaje">🌀 La Cámara del Portal</span>
+        <span class="materia">La salida</span>
+      </div>
+      <div class="panel-hud" style="visibility:hidden">
+        <span class="hud-etiqueta">·</span>
+      </div>
     </div>
 
-    <model-viewer id="visor3d"
-      src="modelos/portal.glb"
+    <div id="zona-inferior">
+      <p id="subtitulo-caine" aria-live="polite"></p>
+      <p id="indicacion"></p>
+      <div class="fila-botones">
+        <button id="btn-iniciar" class="boton-carpa">Acercarse al portal</button>
+      </div>
+      <div id="modo-botones" hidden>
+        <div class="fila-botones">
+          <button id="btn-mano">🖐 Mano abierta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="panel-salida" hidden>
+    <model-viewer id="jax-visor"
+      src="../assets/modelos/jax.glb"
       camera-controls
-      ar
-      shadow-intensity="1"
-      alt="Cámara del portal — modelado propio">
+      disable-zoom
+      camera-orbit="0deg 80deg 4m"
+      alt="Jax">
     </model-viewer>
-
-    <p id="subtitulo-caine" aria-live="polite"></p>
-    <p id="indicacion"></p>
-
-    <div class="fila-botones">
-      <button id="btn-iniciar">🎬 Activar cámara</button>
-      <button id="btn-mano" hidden>🖐 Mano abierta (respaldo)</button>
-    </div>
-  </main>
+    <p id="jax-mensaje"></p>
+    <div id="qr-contenedor"></div>
+    <p id="qr-instruccion">Escanea la puerta de salida</p>
+  </div>
 
   <video id="camara" autoplay muted playsinline></video>
 
@@ -42,11 +98,26 @@
     import { caineDice } from "./js/audio-caine.js";
     import { iniciarGestos } from "./js/gestos.js";
     import { ANIMACIONES, TOTAL_LLAVES } from "./js/config-salas.js";
+    import { sonarOurNewHome } from "./js/musica.js";
 
     pintarHUD();
+    if (llaves().length >= TOTAL_LLAVES) sonarOurNewHome();
     const visor = document.getElementById("visor3d");
     const indicacion = document.getElementById("indicacion");
+    const btnIniciar = document.getElementById("btn-iniciar");
     let abierto = false;
+
+    function mostrarQR() {
+      const panel = document.getElementById("panel-salida");
+      const cont = document.getElementById("qr-contenedor");
+      // Relativa a esta página, no a la raíz del dominio: funciona igual
+      // en local que si el sitio queda publicado bajo una subcarpeta
+      // (p. ej. GitHub Pages de proyecto).
+      const urlSalida = new URL("index.html?desde=portal", window.location.href).href;
+      cont.innerHTML = "";
+      new QRCode(cont, { text: urlSalida, width: 200, height: 200 });
+      panel.hidden = false;
+    }
 
     async function activarPortal() {
       if (abierto) return;
@@ -61,20 +132,19 @@
         visor.play({ repetitions: 1 });
       } catch {}
       indicacion.textContent = "✨ El portal se abre...";
-      await caineDice("99_final");
-      // El giro: "cruzas"... y despiertas en el pasillo de siempre.
-      sessionStorage.clear();
-      location.href = "index.html";
+      document.getElementById("jax-mensaje").textContent =
+        "¿La salida? Jajaja... claro que sí, amiguito. Escanea esa puertita y te llevará a la libertad. Confía en mí, ¿qué podría salir mal?";
+      mostrarQR();
+      await caineDice("jax_portal");
     }
 
-    document.getElementById("btn-iniciar").addEventListener("click", async () => {
-      document.getElementById("btn-iniciar").hidden = true;
+    btnIniciar.addEventListener("click", async () => {
+      btnIniciar.hidden = true;
       indicacion.textContent = "🖐 Mano abierta para activar el portal";
-      const video = document.getElementById("camara");
       try {
-        await iniciarGestos(video, { manoAbierta: activarPortal });
+        await iniciarGestos(document.getElementById("camara"), { manoAbierta: activarPortal });
       } catch {
-        document.getElementById("btn-mano").hidden = false;
+        document.getElementById("modo-botones").hidden = false;
       }
     });
     document.getElementById("btn-mano").addEventListener("click", activarPortal);
