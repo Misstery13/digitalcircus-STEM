@@ -11,17 +11,19 @@ Juego educativo gamificado en web + AR: el usuario despierta atrapado en el Circ
 
 ## Cómo correr la web (local)
 
+`web/` referencia los modelos, imágenes y audio con rutas `../assets/...`, y `assets/` vive en la raíz del repo (hermana de `web/`, no adentro). Por eso el servidor tiene que arrancar desde la **raíz del repo**, no desde `web/` — si no, esas rutas no pueden "salir" de `web/` y todo da 404.
+
 La cámara y el micrófono solo funcionan en `localhost` o HTTPS. Desde la raíz del repo:
 
 ```bash
 # Opción 1 (Python)
-cd web && python3 -m http.server 8000
+python3 -m http.server 8000
 
 # Opción 2 (Node)
-npx serve web
+npx serve .
 ```
 
-Abre `http://localhost:8000`. Para probar en el celular, publica la carpeta `web/` en **GitHub Pages** (Settings → Pages → rama `main`, carpeta `/web` vía acción o mover a `/docs`): Pages sirve HTTPS, así que cámara y micrófono funcionan.
+Abre `http://localhost:8000/web/` (con el `/web/` al final). Para probar en el celular, publica el repo en **GitHub Pages** (Settings → Pages → rama `main`, carpeta **`/ (root)`** — NO `/web`, porque así `assets/` quedaría fuera de lo publicado): Pages sirve HTTPS, así que cámara y micrófono funcionan.
 
 > **Modo silencioso:** si aún no hay mp3 en `web/audio_caine/`, la página muestra los subtítulos de Caine y avanza sola. Si no hay `.glb` en `web/modelos/`, el visor queda vacío pero el flujo del juego funciona. Cada quien puede desarrollar su parte sin esperar a los demás.
 

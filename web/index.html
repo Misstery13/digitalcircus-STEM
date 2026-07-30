@@ -115,6 +115,20 @@
     </div>
   </div>
 
+  <!-- 6. Chat con Caine: se abre al hacer click en él -->
+  <div id="chat-caine" aria-hidden="true">
+    <div class="chat-cabecera">
+      <span>💬 Habla con Caine</span>
+      <button id="chat-cerrar" type="button" aria-label="Cerrar chat">✕</button>
+    </div>
+    <div id="chat-mensajes"></div>
+    <form id="chat-form">
+      <button id="chat-mic" type="button" aria-label="Hablarle a Caine">🎤</button>
+      <input id="chat-input" type="text" placeholder="Escríbele a Caine..." autocomplete="off" />
+      <button type="submit" aria-label="Enviar">➤</button>
+    </form>
+  </div>
+
   <script type="module">
     import { pintarHUD, llaves, todasLasLlaves, resetTodo } from "./js/estado.js";
     import { caineDice, alHablar } from "./js/audio-caine.js";
@@ -260,7 +274,8 @@
       pasillo.classList.add("visible");
       pintarHUD();
       marcarPuertas();
-      iniciarMusica();
+      // La música sigue sonando sola: musica.js ya retomó la pista
+      // guardada al cargar esta página. No volver a iniciarMusica() aquí.
     } else if (llaves().length > 0) {
       btn.textContent = "Volver al circo";
       btn.addEventListener("click", () => entrar(false), { once: true });
@@ -275,5 +290,6 @@
       if (++toquesR >= 3) { detenerMusica(); resetTodo(); location.reload(); }
     });
   </script>
+  <script type="module" src="js/chat-caine.js"></script>
 </body>
 </html>

@@ -70,6 +70,20 @@ export function sonarOurNewHome() {
   }
 }
 
+let volumenPrevio = null;
+
+/** Baja el volumen mientras Caine habla en el chat (y lo restaura después). */
+export function atenuarMusica(activo) {
+  if (!audio) return;
+  if (activo) {
+    if (volumenPrevio === null) volumenPrevio = audio.volume;
+    audio.volume = volumenPrevio * 0.25;
+  } else if (volumenPrevio !== null) {
+    audio.volume = volumenPrevio;
+    volumenPrevio = null;
+  }
+}
+
 // ---- Continuar la música al cargar una página nueva ----
 if (leer(K_ACTIVA, "0") === "1") {
   crearAudio(leer(K_PISTA, "tema"), parseFloat(leer(K_TIEMPO, "0")));
