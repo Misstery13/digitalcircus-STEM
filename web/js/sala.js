@@ -7,8 +7,10 @@
 // Reglas implementadas del documento de diseño:
 //   · fallo o pista → +1 abstracción (glitch CSS progresivo)
 //   · sonrisa fuera de recompensa → −1 abstracción
-//   · abstracción = 3 (global, todo el recorrido) → reset total del juego
-//   · 3 fallos en la misma sala → Caine regala la respuesta ("acto de caridad")
+//   · abstracción = 3 (global, todo el recorrido) → reset total del juego,
+//     con prioridad sobre la caridad si ambas coinciden en el mismo fallo
+//   · 3 fallos en la misma sala (y aún sin llegar al máximo) → Caine
+//     regala la respuesta ("acto de caridad")
 // ============================================================
 
 import { SALAS, TEXTOS, ANIMACIONES, validarRespuesta, normalizar } from "./config-salas.js";
@@ -173,18 +175,12 @@ async function procesarRespuesta(dicho) {
   const abstraido = estado.subirAbstraccion();
   estado.pintarHUD();
 
-  if (fallos >= 3) {
-    // Acto de caridad primero: si coincide con el máximo de abstracción,
-    // Caine igual regala la respuesta antes de resetear (sección 2.3)
-    await caineDice(sala.audios.caridad);
-    fase = "ESCUCHANDO";
-    indicar(conPistaSonrisa("🎤 Repite la respuesta en voz alta"));
-    return;
-  }
-
   if (abstraido) {
-    // Abstracción total (por fallos acumulados de salas previas):
-    // se muestra el modelo abstracted y se vuelve al circo
+    // Abstracción total: la barra llena SIEMPRE resetea, aunque este
+    // mismo fallo también sea el 3° de la sala (la caridad no debe
+    // "salvar" del reset — si no, la barra se ve llena sin que pase
+    // nada hasta un fallo posterior cualquiera, y se siente como si
+    // hiciera falta muchos más fallos de los que en verdad hacen falta).
     sonarOurNewHome();
     ocultarPregunta();
     escena?.classList.add("abierta");
@@ -194,6 +190,15 @@ async function procesarRespuesta(dicho) {
     estado.resetTodo();
     estado.pintarHUD();
     location.href = "index.html";
+    return;
+  }
+
+  if (fallos >= 3) {
+    // Acto de caridad (sección 2.3): solo si la abstracción no llegó
+    // al máximo con este mismo fallo (si llegó, ya reseteó arriba).
+    await caineDice(sala.audios.caridad);
+    fase = "ESCUCHANDO";
+    indicar(conPistaSonrisa("🎤 Repite la respuesta en voz alta"));
     return;
   }
 
