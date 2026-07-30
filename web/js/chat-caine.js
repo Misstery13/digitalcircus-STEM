@@ -8,9 +8,9 @@
 import { atenuarMusica } from "./musica.js";
 import { escucharRespuesta } from "./voz.js";
 
-// Reemplazar por la URL real una vez desplegada la función en Vercel
-// (Vercel → tu proyecto → Deployments → dominio) + "/api/caine-chat".
-const ENDPOINT = "http://localhost:3000/api/caine-chat";
+// Ruta relativa: Vercel sirve la función serverless en /api/caine-chat
+// del mismo dominio que la página, tanto en producción como en preview.
+const ENDPOINT = "/api/caine-chat";
 
 const panel = document.getElementById("chat-caine");
 const lista = document.getElementById("chat-mensajes");
