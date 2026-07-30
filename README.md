@@ -1,11 +1,21 @@
 # 🎪 Digital Circus STEM Escape
 
-Juego educativo gamificado en web + AR: el usuario despierta atrapado en el Circo Digital y debe superar cinco salas STEM (Matemáticas, Ciencias, Programación, Tecnología e IA) para ganar las cinco llaves del portal de salida. Interacción natural por **voz**, **gestos de mano** y **expresiones faciales** — el rostro y las manos del usuario son el avatar.
+Juego educativo gamificado en web + AR: el usuario despierta atrapado en el Circo Digital y debe superar cinco salas STEM (Matemáticas, Ciencias, Programación, Tecnología e IA) para ganar las cinco llaves del portal de salida. La experiencia combina interacción por **voz**, **gestos de mano**, **expresiones faciales** y una capa de audio inmersiva: Caine habla con subtítulos, la música se atenúa mientras habla y el hub incluye un chat conversacional con voz.
 
 **Materia:** Diseño de Interacción Hombre–Máquina · Taller–Proyecto Final 2025-2
 **Entrega:** 30 de julio de 2026
 
 📄 Diseño completo: [`docs/documento-diseno.md`](docs/documento-diseno.md)
+
+---
+
+## Últimas implementaciones
+
+- Flujo completo de salas con interacción por voz y gestos: mano abierta para abrir puertas, pulgar arriba para confirmar y sonrisa para reclamar recompensas.
+- Voz de Caine con subtítulos y audio de bienvenida; si el mp3 no está disponible, el juego sigue funcionando en modo silencioso con respaldo de texto.
+- Música de fondo persistente entre páginas, con atenuación automática mientras Caine habla para que la voz se escuche mejor.
+- Chat de Caine en el hub, con respuestas generadas por IA y reproducción de voz desde un backend serverless.
+- Estado persistido en sesión para llaves, abstracción, música y progreso entre páginas.
 
 ---
 
@@ -37,28 +47,44 @@ node herramientas/generar_voces_caine.js
 
 Editar `VOICE_ID` dentro del script. **La API key jamás se escribe en el código ni se sube al repo.**
 
+## Chat de Caine (opcional)
+
+El panel de chat del hub usa un endpoint serverless en [api/caine-chat.js](api/caine-chat.js). Para activarlo en Vercel o un entorno similar, define estas variables:
+
+```bash
+export OPENROUTER_API_KEY="tu_api_key"
+export FISH_API_KEY="tu_api_key"
+```
+
+El proyecto ya incluye la configuración de Vercel en [vercel.json](vercel.json).
+
 ## Estructura
 
 ```
+├── api/
+│   └── caine-chat.js         ← backend serverless para el chat conversacional
 ├── docs/
-│   ├── documento-diseno.md    ← diseño completo (fuente de verdad)
-│   └── atribuciones.md        ← licencias de todos los assets
+│   ├── documento-diseno.md   ← diseño completo (fuente de verdad)
+│   └── atribuciones.md       ← licencias de todos los assets
 ├── herramientas/
-│   ├── generar_voces_caine.js ← genera los 40 mp3 (Fish Audio, Node 18+)
+│   ├── generar_voces_caine.js ← genera los mp3 de Caine (Fish Audio, Node 18+)
 │   └── generar_voces_caine.py ← versión Python equivalente
 └── web/
-    ├── index.html             ← hub (pasillo de puertas)
-    ├── sala.html?id=1..5      ← página única parametrizada para las 5 salas
-    ├── portal.html            ← cámara del portal (final con giro)
-    ├── css/estilos.css        ← tema circense + glitch de abstracción
+    ├── index.html            ← hub (pasillo de puertas)
+    ├── sala.html?id=1..5     ← página única parametrizada para las 5 salas
+    ├── portal.html           ← cámara del portal (final con giro)
+    ├── css/estilos.css       ← tema circense + glitch de abstracción
     ├── js/
-    │   ├── config-salas.js    ← datos de salas, respuestas, validador
-    │   ├── estado.js          ← llaves + abstracción (sessionStorage)
-    │   ├── audio-caine.js     ← reproductor de líneas + subtítulos
-    │   ├── gestos.js          ← MediaPipe (mano, pulgar, sonrisa) + voz
-    │   └── sala.js            ← máquina de estados del reto
-    ├── audio_caine/           ← mp3 generados (compañero 2)
-    └── modelos/               ← .glb por sala (Diana)
+    │   ├── config-salas.js   ← datos de salas, respuestas, validador
+    │   ├── estado.js         ← llaves + abstracción (sessionStorage)
+    │   ├── audio-caine.js    ← reproductor de líneas + subtítulos
+    │   ├── chat-caine.js     ← panel y lógica del chat conversacional
+    │   ├── gestos.js         ← MediaPipe (mano, pulgar, sonrisa) + voz
+    │   ├── musica.js         ← música de fondo y atenuación automática
+    │   ├── sala.js           ← máquina de estados del reto
+    │   └── voz.js            ← reconocimiento de voz por Web Speech
+    ├── audio_caine/          ← mp3 generados de Caine
+    └── modelos/              ← .glb por sala y portal
 ```
 
 ## Contratos entre módulos — NO cambiar sin avisar al equipo
@@ -90,6 +116,10 @@ Editar `VOICE_ID` dentro del script. **La API key jamás se escribe en el códig
 ## Estado de integración
 
 - [x] Esqueleto web funcional (flujo completo con respaldos sin cámara/audio/3D)
+- [x] Interacción por voz y gestos en la experiencia principal
+- [x] Voz de Caine con subtítulos y audio de bienvenida
+- [x] Música de fondo reactiva y atenuación automática durante el habla
+- [x] Chat conversacional de Caine con voz en el hub
 - [ ] Modelos `.glb` optimizados con animaciones (Diana)
 - [ ] mp3 de Caine generados y con control de calidad (C2)
 - [ ] Agente Dialogflow conectado — hoy corre el fallback Web Speech (C2 + C3)

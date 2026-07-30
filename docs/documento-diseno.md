@@ -13,13 +13,16 @@
 
 **Público objetivo:** estudiantes de secundaria y primeros semestres universitarios (13–20 años). El tono es humorístico y teatral; las preguntas refuerzan conceptos STEM básicos.
 
-**Propósito:** juego educativo gamificado en realidad aumentada que demuestra interacción natural mediante voz, gestos y expresiones faciales.
+**Propósito:** juego educativo gamificado que demuestra interacción natural mediante voz, gestos y expresiones faciales dentro de una experiencia web inmersiva.
 
-**Plataforma:** experiencia web + AR móvil (sin Unity).
-- Escenas 3D en AR activadas por códigos QR (Adobe Aero / Sketchfab AR)
-- Página web por sala con visor 3D (`model-viewer` / Three.js)
-- Chatbot por voz (Dialogflow) embebido en la página
+**Plataforma actual:** experiencia web con visor 3D y cámara del navegador.
+- Página web por sala con visor 3D (`model-viewer` / HTML)
 - Tracking de manos y rostro (MediaPipe JS) en el navegador
+- Reconocimiento de voz por Web Speech API con respaldo de texto
+- Reproducción de voces de Caine con subtítulos y música de fondo reactiva
+- Chat conversacional de Caine con voz mediante backend serverless (OpenRouter + Fish Audio)
+
+**Estado de implementación (julio 2026):** la experiencia ya está operativa en versión web: el usuario puede abrir puertas, responder por voz, confirmar con pulgar, reclamar recompensas con sonrisa, escuchar a Caine y conversar con él desde el hub. La arquitectura actual prioriza simplicidad de despliegue y compatibilidad con GitHub Pages + Vercel.
 
 **Justificación de diseño (para el documento técnico):** la experiencia usa primera persona real — el rostro y las manos del propio usuario son el "avatar". Esto refuerza el *embodiment* y la sensación de *presencia*: el atrapado en el circo es el usuario, no un personaje que controla. Cada gesto tiene además un significado dentro del mundo narrativo, no solo una función mecánica.
 
@@ -76,7 +79,7 @@ El usuario **gana el juego** (cierre claro para la rúbrica); la **historia** re
 | Pulgar arriba | MediaPipe Gesture Recognizer (`Thumb_Up`) | Confirma la respuesta dada por voz | Sellar el trato con Caine |
 | Sonrisa | MediaPipe Face Landmarker (blendshape de sonrisa) | Desbloquea la recompensa / reduce abstracción | Defensa contra la abstracción |
 
-**Regla de diseño de voz:** todas las respuestas esperadas son **una palabra o un número** (fáciles de reconocer por Dialogflow y de pronunciar en voz alta).
+**Regla de diseño de voz:** todas las respuestas esperadas son **una palabra o un número** (fáciles de reconocer por voz y de pronunciar en voz alta). El sistema incluye respaldo por texto cuando el reconocimiento no funciona correctamente.
 
 ---
 
@@ -153,14 +156,16 @@ Orden fijo: Gangle → Ragatha → Kinger → Zooble → Pomni. El chatbot guía
 
 ## 5. Arquitectura de la experiencia (resumen técnico)
 
-1. QR → abre la página web de la sala (o escena Aero/Sketchfab según prueba de rendimiento)
-2. La página carga el `.glb` de la sala (animaciones incluidas desde Blender)
-3. MediaPipe JS corre en la misma página con la cámara
-4. Gesto detectado → dispara animación por nombre: `puerta_abrir`, `recompensa_aparecer`, `portal_activar`
-5. Dialogflow Messenger embebido → Caine por voz (pregunta, pistas, validación)
-6. Contador de llaves y nivel de abstracción: variables JS de sesión (+ contexto de Dialogflow)
+1. La página carga el `.glb` de la sala y la escena 3D correspondiente.
+2. MediaPipe JS corre en la misma página con la cámara para detectar mano abierta, pulgar arriba y sonrisa.
+3. Gesto detectado → dispara animación por nombre: `puerta_abrir`, `recompensa_aparecer`, `portal_activar`.
+4. El flujo de la sala se controla con una máquina de estados en JavaScript: pregunta, escucha, validación, confirmación y recompensa.
+5. El reconocimiento de voz del usuario ocurre con Web Speech API y, si falla, el sistema permite responder por texto.
+6. Caine reproduce líneas pregrabadas con subtítulos y la música de fondo se atenúa automáticamente mientras habla.
+7. El chat conversacional del hub usa un backend serverless en Vercel con OpenRouter para generar respuestas y Fish Audio para convertirlas en voz.
+8. El estado de llaves, abstracción, música y progreso se conserva en `sessionStorage` para mantener la experiencia entre páginas.
 
-**Contrato entre módulos:** los nombres de animaciones son la interfaz entre el 3D (Diana) y el código (compañero 3). Se acuerdan por escrito y no se cambian sin avisar.
+**Contrato entre módulos:** los nombres de animaciones son la interfaz entre el 3D (Diana) y el código. Se acuerdan por escrito y no se cambian sin avisar.
 
 | Animación | Escena | Disparador |
 |---|---|---|
@@ -168,9 +173,9 @@ Orden fijo: Gangle → Ragatha → Kinger → Zooble → Pomni. El chatbot guía
 | `recompensa_aparecer` | Cada sala | Sonrisa (tras acierto confirmado) |
 | `portal_activar` | Cámara del portal | 5 llaves reunidas |
 
-**Voz de Caine (pregrabada):** el guion de Caine es fijo, así que sus líneas se generan como mp3 y la página web reproduce el audio correspondiente a cada respuesta del bot. Dialogflow mantiene el reconocimiento de voz del usuario y la lógica de validación. Generación de audio: API de Fish Audio (tier de desarrollo `s2.1-pro-free`) con el script `herramientas/generar_voces_caine.js`. Ventajas: personalidad consistente, cero dependencia de síntesis en vivo durante la demo, regenerar una línea cuesta un comando. Plan B: grabación con actuación de voz propia de un integrante.
+**Voz de Caine (pregrabada):** el guion de Caine es fijo, así que sus líneas se generan como mp3 y la página web reproduce el audio correspondiente a cada respuesta del bot. La implementación actual usa `audio-caine.js` para subtítulos y reproducción, con un modo silencioso de respaldo si el mp3 aún no existe. Generación de audio: API de Fish Audio con el script `herramientas/generar_voces_caine.js`.
 
-**Decisión de chatbot:** Dialogflow como plan A (nombrado en el PDF del docente, voz integrada, widget embebible, experiencia previa del equipo). Alternativa evaluada: LLM vía OpenRouter + Web Speech API — más natural, pero requiere backend intermedio para proteger la API key y construir voz/validación a mano. Se adopta solo como mejora si el plan A queda funcional antes del 26 de julio, previa consulta al docente.
+**Decisión de chatbot:** la implementación actual prioriza una solución simple y desplegable para web: Web Speech API para voz del usuario y un endpoint serverless en Vercel para responder con IA y voz. Dialogflow queda como una mejora futura si se requiere una lógica de conversación más compleja.
 
 ---
 
@@ -183,18 +188,19 @@ Orden fijo: Gangle → Ragatha → Kinger → Zooble → Pomni. El chatbot guía
 - Exportar un `.glb` por sala, subir, generar y probar los 6 QR
 - Atribuciones de modelos para el documento técnico
 
-**Compañero 2 — chatbot + contenido**
-- Agente en Dialogflow: intents por sala (pregunta, pistas ×2, validación, fallo ×3)
+**Compañero 2 — contenido + voces + IA**
 - Generación de las líneas de Caine con Fish Audio (mp3 por línea) y control de calidad de audio
-- Guion completo de Caine (este documento es la base)
-- Redacción de la Fase 1 para el documento técnico
+- Guion completo de Caine y contenido de las salas
+- Integración del chat conversacional con OpenRouter + voz de Caine
+- Redacción del documento técnico y soporte narrativo del proyecto
 
 **Compañero 3 — tracking + integración + entrega**
 - MediaPipe JS: mano abierta, pulgar arriba, sonrisa
-- Página web por sala: visor 3D + cámara + chatbot embebido + contador de llaves/abstracción + filtro glitch
+- Página web por sala: visor 3D + cámara + reconocimiento de voz + contador de llaves/abstracción + filtro glitch
+- Música de fondo reactiva y atenuación automática al hablar
 - Edición del video final (2–3 min) y compilación del documento técnico
 
-**Los tres juntos:** storyboard visual (este documento + bocetos), sesión de integración presencial/Discord los días 27–28, grabación del video.
+**Los tres juntos:** storyboard visual, integración de los módulos de audio, interacción y 3D, y grabación del video.
 
 ---
 
@@ -202,9 +208,9 @@ Orden fijo: Gangle → Ragatha → Kinger → Zooble → Pomni. El chatbot guía
 
 | Fechas | Hito |
 |---|---|
-| 15–18 jul | Storyboard cerrado · prueba de pipeline: 1 habitación exportada, subida y escaneada por QR |
-| 19–26 jul | Trabajo en paralelo: Diana (5 salas + hub), C2 (chatbot completo), C3 (gestos + web) |
-| 27–28 jul | Integración conjunta: gestos → animaciones, chatbot → validación, contador de llaves |
+| 15–18 jul | Storyboard cerrado · prueba de pipeline: 1 habitación exportada y probada en la web |
+| 19–26 jul | Trabajo en paralelo: Diana (5 salas + hub), C2 (voces + contenido + chat IA), C3 (gestos + web + audio) |
+| 27–28 jul | Integración conjunta: gestos → animaciones, voz → validación, música → mezcla, chat → experiencia completa |
 | 29 jul | Grabación y edición del video · documento técnico final |
 | 30 jul | Entrega |
 
