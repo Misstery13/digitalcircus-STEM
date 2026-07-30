@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>La Camara del Portal - Digital Circus STEM Escape</title>
+  <title>La Cámara del Portal — Digital Circus STEM Escape</title>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rye&family=Atkinson+Hyperlegible:wght@400;700&display=swap" />
   <link rel="stylesheet" href="css/escenario.css" />
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
@@ -42,7 +42,7 @@
       shadow-intensity="1"
       exposure="1.1"
       camera-orbit="0deg 78deg 9m"
-      alt="La camara del portal">
+      alt="La cámara del portal">
     </model-viewer>
   </div>
 
@@ -56,11 +56,11 @@
         <div id="hud-llaves"></div>
       </div>
       <div id="rotulo-sala">
-        <span class="personaje">La Camara del Portal</span>
+        <span class="personaje">🌀 La Cámara del Portal</span>
         <span class="materia">La salida</span>
       </div>
       <div class="panel-hud" style="visibility:hidden">
-        <span class="hud-etiqueta">.</span>
+        <span class="hud-etiqueta">·</span>
       </div>
     </div>
 
@@ -72,7 +72,7 @@
       </div>
       <div id="modo-botones" hidden>
         <div class="fila-botones">
-          <button id="btn-mano">Mano abierta</button>
+          <button id="btn-mano">🖐 Mano abierta</button>
         </div>
       </div>
     </div>
@@ -110,7 +110,10 @@
     function mostrarQR() {
       const panel = document.getElementById("panel-salida");
       const cont = document.getElementById("qr-contenedor");
-      const urlSalida = window.location.origin + "/web/index.html?desde=portal";
+      // Relativa a esta página, no a la raíz del dominio: funciona igual
+      // en local que si el sitio queda publicado bajo una subcarpeta
+      // (p. ej. GitHub Pages de proyecto).
+      const urlSalida = new URL("index.html?desde=portal", window.location.href).href;
       cont.innerHTML = "";
       new QRCode(cont, { text: urlSalida, width: 200, height: 200 });
       panel.hidden = false;
@@ -128,16 +131,16 @@
         visor.animationName = ANIMACIONES.portal;
         visor.play({ repetitions: 1 });
       } catch {}
-      indicacion.textContent = "El portal se abre...";
+      indicacion.textContent = "✨ El portal se abre...";
       document.getElementById("jax-mensaje").textContent =
-        "La salida? Jajaja... claro que si, amiguito. Escanea esa puertita y te llevara a la libertad. Confia en mi, que podria salir mal?";
+        "¿La salida? Jajaja... claro que sí, amiguito. Escanea esa puertita y te llevará a la libertad. Confía en mí, ¿qué podría salir mal?";
       mostrarQR();
       await caineDice("jax_portal");
     }
 
     btnIniciar.addEventListener("click", async () => {
       btnIniciar.hidden = true;
-      indicacion.textContent = "Mano abierta para activar el portal";
+      indicacion.textContent = "🖐 Mano abierta para activar el portal";
       try {
         await iniciarGestos(document.getElementById("camara"), { manoAbierta: activarPortal });
       } catch {

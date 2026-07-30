@@ -249,6 +249,7 @@
       // 5 · presentación
       if (new URLSearchParams(location.search).get("desde") === "portal") {
         await caineDice("99_final");
+        resetTodo(); // el giro es que "no hay salida": vuelve a empezar de cero
       } else if (conIntro) {
         await caineDice("00_intro");
       }
